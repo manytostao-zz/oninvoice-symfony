@@ -1,0 +1,14 @@
+parameters:
+    database_driver: pdo_mysql
+    database_host: 127.0.0.1
+    database_port: null
+    database_name: kepnixco_fusionclone
+    database_user: kepnixco_fusion
+    database_password: fusion
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: es
+    secret: ffef2c87c9d634c395963e84a45a2813
+    database_path: null

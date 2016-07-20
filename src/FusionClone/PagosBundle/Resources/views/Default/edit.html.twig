@@ -1,0 +1,116 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <!-- Data Table styles-->
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/pagos/css/pago.css') }}">
+{% endblock %}
+{% block header %}
+    {{ form_start(formPago) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Pago
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formPago.Guardar,{ 'attr': {'class':'btn btn-primary' }}
+            ) }}
+        </div>
+
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+        {% if (form_errors(formPago)) %}
+            <div class="alert alert-danger">{{ form_errors(formPago) }}</div>
+        {% endif %}
+        {% if (form_errors(formPago.fecha)) %}
+            <div class="alert alert-danger">{{ form_errors(formPago.fecha) }}</div>
+        {% endif %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <label>Importe:</label>
+
+                                    <div>{{ form_widget(formPago.importe,{ 'attr': {'class':'form-control' }}
+                                        ) }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>M&eacute;todo de Pago:</label>
+
+                                    <div>{{ form_widget(formPago.metodo,{ 'attr': {'class':'form-control' }}
+                                        ) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <label>Nota:</label>
+
+                                    <div>{{ form_widget(formPago.nota,{ 'attr': {'class':'form-control' }}
+                                        ) }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Fecha</label>
+                                    <div id="datetimepicker2" class="input-group date">
+                                        {{ form_widget(formPago.fecha, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }, 'class': 'form-control'}) }}
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ form_end(formPago) }}
+    </section>
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                moment.locale('es');
+                $('#formPago_metodo').select2({
+                    language: "es",
+                    width: 200,
+                    minimumResultsForSearch: Infinity
+                });
+
+                $('#datetimepicker2').datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    locale: 'es',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-o',
+                        clear: 'fa fa-trash-o'
+                    }
+                });
+            });
+        })
+    </script>
+{% endblock %}

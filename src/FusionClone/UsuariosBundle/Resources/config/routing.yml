@@ -1,0 +1,46 @@
+usuarios_login:
+    pattern:  /login
+    defaults: { _controller: UsuariosBundle:Default:login}
+
+usuarios_login_check:
+    pattern:  /login_check
+
+usuarios_logout:
+    pattern:  /logout
+
+usuarios_list:
+    pattern:  /usuarios/
+    defaults: { _controller: UsuariosBundle:Default:list}
+
+usuarios_create:
+    pattern:  /usuarios/crear/
+    defaults: { _controller: UsuariosBundle:Default:create}
+
+usuarios_edit:
+    pattern:  /usuarios/{id}/editar/
+    defaults: { _controller: UsuariosBundle:Default:edit}
+    options:
+        expose: true
+
+usuarios_save:
+    pattern:  /usuarios/save/
+    defaults: { _controller: UsuariosBundle:Default:save}
+
+usuarios_delete:
+    pattern:  /usuarios/{id}/borrar/
+    defaults: { _controller: UsuariosBundle:Default:delete}
+    options:
+        expose: true
+
+usuarios_editPass:
+    pattern:  /usuarios/{id}/contrasenna/edit
+    defaults: { _controller: UsuariosBundle:Default:editPass}
+    options:
+        expose: true
+
+#AJAXSOURCE
+usuarios_listUsuaAjax:
+    pattern:  /lista_ajax/
+    defaults: {_controller: UsuariosBundle:Default:listAjax }
+    options:
+        expose: true

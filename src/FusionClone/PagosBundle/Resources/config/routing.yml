@@ -1,0 +1,26 @@
+pagos_homepage:
+    pattern:  /pagos/
+    defaults: { _controller: PagosBundle:Default:index }
+
+pagos_edit:
+    pattern:  /pagos/{id}/editar/
+    defaults: { _controller: PagosBundle:Default:edit }
+    options:
+        expose: true
+
+pagos_save:
+    pattern:  /pagos/salvar/
+    defaults: { _controller: PagosBundle:Default:save }
+
+pagos_delete:
+    pattern:  /pagos/{id}/borrar/
+    defaults: { _controller: PagosBundle:Default:delete }
+    options:
+        expose: true
+
+#AJAXSOURCE
+pagos_listPagosAjax:
+    pattern:  /lista_ajax/
+    defaults: {_controller: PagosBundle:Default:listAjax }
+    options:
+        expose: true

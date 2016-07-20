@@ -1,0 +1,120 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+{% endblock %}
+{% block header %}
+    {{ form_start(formCliente) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Cliente
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formCliente.Guardar) }}</div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+    {% if (form_errors(formCliente)) %}
+        <div class="alert alert-danger">{{ form_errors(formCliente) }}</div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Informaci&oacute;n Personal
+                </div>
+                <div class="panel-body">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nombre Cliente</label>
+                                    {{ form_widget(formCliente.nombre) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Direcci&oacute;n:</label>
+                                    {{ form_widget(formCliente.direccion) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tel&eacute;fono:</label>
+                                    {{ form_widget(formCliente.telefono) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label># Fax:</label>
+                                    {{ form_widget(formCliente.fax) }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>Tel&eacute;fono m&oacute;vil:</label>
+                                    {{ form_widget(formCliente.movil) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Direcci&oacute;n de email:</label>
+                                    {{ form_widget(formCliente.email) }}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Sitio web:</label>
+                                    {{ form_widget(formCliente.webpage) }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Moneda por defecto: </label>
+                                    {{ form_widget(formCliente.defMone) }}
+                                </div>
+                            </div>
+                            <div class="checkbox c-checkbox pull-right" style="padding: 20px">
+                                <label>
+                                    {{ form_widget(formCliente.activo) }}
+                                    <span class="fa fa-check"></span>
+                                    Activo
+                                </label>
+                            </div>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>{{ form_end(formCliente) }}
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                var selects = document.getElementsByTagName('select');
+                for (var i = 0; i < selects.length; i++) {
+                    $('#' + selects[i].id).select2();
+                }
+            });
+        });
+    </script>
+{% endblock %}

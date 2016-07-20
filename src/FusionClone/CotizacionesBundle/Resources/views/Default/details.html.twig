@@ -1,0 +1,683 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/cotizaciones/css/cotizacion.css') }}">
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+        {{ form_start(formCot) }}
+        {% for mensaje in app.session.flashbag.get('info_add') %}
+            <div class="alert alert-success alert-dismissible">{{ mensaje }}</div>
+        {% endfor %}
+        {% for mensaje in app.session.flashbag.get('info_edit') %}
+            <div class="alert alert-info alert-dismissible">{{ mensaje }}</div>
+        {% endfor %}
+        {% for mensaje in app.session.flashbag.get('info_delete') %}
+            <div class="alert alert-warning alert-dismissible">{{ mensaje }}</div>
+        {% endfor %}
+        {% if (form_errors(formCot)) %}
+            <div class="alert alert-danger">{{ form_errors(formCot) }}</div>
+        {% endif %}
+        {% if (form_errors(formCot.tasa)) %}
+            <div class="alert alert-danger">{{ form_errors(formCot.tasa) }}</div>
+        {% endif %}
+        {% if (form_errors(formCot.fecha)) %}
+            <div class="alert alert-danger">{{ form_errors(formCot.fecha) }}</div>
+        {% endif %}
+        {% if (form_errors(formCot.fechaVenc)) %}
+            <div class="alert alert-danger">{{ form_errors(formCot.fechaVenc) }}</div>
+        {% endif %}
+        {% for formCotItem in formCot.cotItems %}
+            {% if (form_errors(formCotItem.producto)) %}
+                <div class="alert alert-danger">{{ form_errors(formCotItem.producto) }}</div>
+            {% endif %}
+            {% if (form_errors(formCotItem.cantidad)) %}
+                <div class="alert alert-danger">{{ form_errors(formCotItem.cantidad) }}</div>
+            {% endif %}
+            {% if (form_errors(formCotItem.precio)) %}
+                <div class="alert alert-danger">{{ form_errors(formCotItem.precio) }}</div>
+            {% endif %}
+        {% endfor %}
+        {% for formCotImp in formCot.cotImps %}
+            {% if (form_errors(formCotImp.impuesto)) %}
+                <div class="alert alert-danger">{{ form_errors(formCotImp.impuesto) }}</div>
+            {% endif %}
+            {% if (form_errors(formCotImp.antesImpItem)) %}
+                <div class="alert alert-danger">{{ form_errors(formCotImp.antesImpItem) }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- START panel-->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-6"><h3 style="min-width: 250px;">
+                                    <label>Cotizaci&oacute;n #:
+                                        {% if(cotizacion.estado != 'Borrador') %}
+                                            {{ form_widget(formCot.codigo, {'attr':{'disabled':'true' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formCot.codigo) }}
+                                        {% endif %}
+                                    </label></h3>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="pull-right">
+                                    <a class="btn btn-circle" title="Ir a Listado"
+                                       href={{ path('cotizaciones_homepage') }}>
+                                        <em class="fa fa-list"></em></a>
+                                    {% if is_granted('ROLE_USUARIO') %}
+                                        <div class="btn-group">
+                                            <button class="btn btn-circle dropdown-toggle" data-toggle="dropdown"
+                                                    type="button"
+                                                    aria-expanded="false">
+                                                Operaciones
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                {% if cotizacion.estado == 'Enviado' %}
+                                                    <li>
+                                                        <a href="#"
+                                                           onclick="if (confirm('¿Está seguro que desea aprobar esta cotización?'))
+                                                                   document.location = '{{ path('cotizaciones_approve', {'id':cotizacion.id}) }}'">
+                                                            <em class="fa fa-check text-success"> </em> Aprobar
+                                                        </a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <a href="#"
+                                                           onclick="if (confirm('¿Está seguro que desea rechazar esta cotización?'))
+                                                                   document.location = '{{ path('cotizaciones_reject', {'id':cotizacion.id}) }}'">
+                                                            <em class="fa fa-check text-danger"> </em> Rechazar
+                                                        </a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                {% endif %}
+                                                {% if cotizacion.estado == 'Aprobado' %}
+                                                    <li>
+                                                        <a data-target="#myModal" data-toggle="modal" href="#">
+                                                            <em class="fa fa-file-text-o"> </em> Crear Factura</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                {% endif %}
+                                                {% if cotizacion.estado != 'Cancelado' %}
+                                                    <li>
+                                                        <a title="Enviar Email"
+                                                           href={{ path('cotizaciones_send_mail', {'id': cotizacion.id}) }}>
+                                                            <em class="fa fa-envelope-o"></em> Enviar Email</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                {% endif %}
+                                                <li>
+                                                    <a title="Exportar a PDF"
+                                                       href={{ path('cotizaciones_preview', {'id': cotizacion.id, 'preview':1}) }}>
+                                                        <em class="fa fa-print"></em> Exportar a PDF</a>
+                                                </li>
+                                                {% if cotizacion.estado != 'Borrador' and cotizacion.estado != 'Cancelado' %}
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <a href="#"
+                                                           onclick="if (confirm('¿Está seguro que desea cancelar esta cotización?'))
+                                                                   document.location = '{{ path('cotizaciones_cancel', {'id':cotizacion.id}) }}'">
+                                                            <em class="fa fa-ban text-danger"> </em> Cancelar</a>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                    {% if cotizacion.estado == 'Borrador' %}
+                                        {{ form_widget(formCot.Guardar) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">Datos Generales</a>
+                            </li>
+                            <li class=""><a href="#profile" data-toggle="tab">Líneas de Documento</a>
+                            </li>
+                            <li class=""><a href="#messages" data-toggle="tab">Impuestos</a>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane fade active in">
+                                {% if usuario is not null %}
+                                <div class="pull-left" style="text-align: left;">
+                                    <h4>Desde</h4>
+                                    <br>
+                                    <strong>{{ usuario.compannia }}</strong>
+                                    <br>
+                                    {{ usuario.nombre }}
+                                    <br>
+                                    {{ usuario.direccion }}
+                                    <br>
+                                    Tel&eacute;fono: {{ usuario.telefono }}
+                                    <br>
+                                    Contacto: {{ usuario.email }}
+                                </div>
+                                {% endif %}
+                                {% if cotizacion.cliente is not null %}
+                                <div class="pull-right" style="text-align: left;">
+                                    <h4>Para</h4>
+                                    <br>
+                                    <strong><a href={{ path('clientes_details', {'id':cotizacion.cliente.id}) }}>{{ cotizacion.cliente.nombre }}</a></strong>
+                                    <br>
+                                    {{ cotizacion.cliente.direccion }}
+                                    <br>
+                                    Tel&eacute;fono: {{ cotizacion.cliente.telefono }}
+                                    <br>
+                                    Contacto:
+                                </div>
+                                {% endif %}
+                                <div class="clearfix"></div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <table role="grid" id="clientestable"
+                                               class="table table-striped table-hover dataTable no-footer">
+                                            <tbody>
+                                            <tr role="row">
+                                                <td>
+                                                    Fecha
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            <div id="datetimepicker1" class="input-group date">
+                                                                {% if(cotizacion.estado != 'Borrador') %}
+                                                                    {{ form_widget(formCot.fecha, {'attr':{'disabled':'true' }}) }}
+                                                                {% else %}
+                                                                    {{ form_widget(formCot.fecha, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}) }}
+                                                                    <span class="input-group-addon">
+                                                                <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Fecha de Vencimiento
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            <div id="datetimepicker2" class="input-group date">
+                                                                {% if(cotizacion.estado != 'Borrador') %}
+                                                                    {{ form_widget(formCot.fechaVenc, {'attr':{'disabled':'true' }}) }}
+                                                                {% else %}
+                                                                    {{ form_widget(formCot.fechaVenc, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}) }}
+                                                                    <span class="input-group-addon">
+                                                                <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Estado
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            {% if(cotizacion.estado != 'Borrador') %}
+                                                                {{ form_widget(formCot.estado, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formCot.estado) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Moneda
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            {% if(cotizacion.estado != 'Borrador') %}
+                                                                {{ form_widget(formCot.moneda, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formCot.moneda) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Tasa
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            {% if(cotizacion.estado != 'Borrador') %}
+                                                                {{ form_widget(formCot.tasa, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formCot.tasa) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div>
+                                                            T&eacute;rminos
+                                                            {% if(cotizacion.estado != 'Borrador') %}
+                                                                {{ form_widget(formCot.terms, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formCot.terms) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div>
+                                                            Pie
+                                                            {% if(cotizacion.estado != 'Borrador') %}
+                                                                {{ form_widget(formCot.pie, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formCot.pie) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Subtotal:</strong>
+                                            {% set subtotal = 0 %}
+                                            {% for formCotItem in formCot.cotItems %}
+                                                {% set subtotal = subtotal + formCotItem.vars.value.total %}
+                                            {% endfor %}
+                                            {% set impuestos = 0 %}
+                                            {% for formCotImp in formCot.cotImps %}
+                                                {% set impuestos = impuestos + formCotImp.vars.value.total %}
+                                            {% endfor %}
+
+                                            <span class="pull-right">
+                        {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                        {% endif %}
+                                                {{ subtotal|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                {% endif %}
+                    </span>
+                                        </div>
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Impuesto:</strong>
+
+                    <span class="pull-right">
+                        {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                        {% endif %}
+                        {{ impuestos|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                        {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                        {% endif %}
+                    </span>
+
+                                        </div>
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Total:</strong>
+                                            {{ form_widget(formCot.importe,{ 'attr': {'value':(subtotal - impuestos) }}) }}
+                                            <span class="pull-right">
+                        {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                        {% endif %}
+                                                {{ (subtotal + impuestos)|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                {% endif %}
+                    </span>
+                                            {% if cotizacion.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}
+                                                <br/>
+                                                <span class="pull-right">({{ cotizacion.moneda.simbolo }}{{ ((subtotal + impuestos) * cotizacion.moneda.tasa) |number_format(3, cotizacion.moneda.signDecimal, cotizacion.moneda.signMillares) }}
+                                                    )</span>
+                                                <br/>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="profile" class="tab-pane fade">
+                                <div class="table-scrollable">
+                                    <table id="item-table" class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 20%;">Producto</th>
+                                            <th style="width: 25%;">Descripción</th>
+                                            <th style="width: 10%;">Cantidad</th>
+                                            <th style="width: 10%;">Precio</th>
+                                            <th style="width: 20%;">Tasa de Impuesto</th>
+                                            <th style="width: 10%; text-align: right; padding-right: 25px;">Total</th>
+                                            <th style="width: 5%;"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody {% if(cotizacion.estado == 'Borrador') %} class="tags"{% endif %}
+                                                data-prototype="{% filter escape %}{% include 'CotizacionesBundle:Prototypes:cotItemsPrototype.html.twig' with {'form': formCot.cotItems.vars.prototype} %}{% endfilter %}">
+                                        {% for formCotItem in formCot.cotItems %}
+                                            <tr>
+                                                <td>
+                                                    {% if(cotizacion.estado != 'Borrador') %}
+                                                        {{ form_widget(formCotItem.producto,{ 'attr': {'class':'form-control form-item', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formCotItem.producto,{ 'attr': {'class':'form-control form-item' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(cotizacion.estado != 'Borrador') %}
+                                                        {{ form_widget(formCotItem.descripcion,{ 'attr': {'disabled':'true'}}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formCotItem.descripcion) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(cotizacion.estado != 'Borrador') %}
+                                                        {{ form_widget(formCotItem.cantidad,{ 'attr': {'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formCotItem.cantidad) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(cotizacion.estado != 'Borrador') %}
+                                                        {{ form_widget(formCotItem.precio,{ 'attr': {'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formCotItem.precio) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(cotizacion.estado != 'Borrador') %}
+                                                        {{ form_widget(formCotItem.impuesto,{ 'attr': {'class':'form-control form-tax', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formCotItem.impuesto,{ 'attr': {'class':'form-control form-tax' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ formCotItem.vars.value.total|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="pull-right"><strong>Subtotal:</strong> <span class="text-warning"
+                                                                                             style="background-color: #2b2b2b">
+                        {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                        {% endif %}
+                                            {{ subtotal|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                            {% endif %}
+                    </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="messages" class="tab-pane fade">
+                                <div class="table-responsive">
+                                    <table id="item-table" class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 30%;">Impuesto</th>
+                                            <th style="width: 30%;">Tipo de Ejecuci&oacute;n</th>
+                                            <th style="width: 15%;">Porcentaje</th>
+                                            <th style="width: 15%;">Total</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody {% if(cotizacion.estado == 'Borrador') %} class="imps"{% endif %}
+                                                data-prototype="{% filter escape %}{% include 'CotizacionesBundle:Prototypes:cottImpsPrototype.html.twig' with {'form': formCot.cotImps.vars.prototype} %}{% endfilter %}">
+                                        {% for formCotImp in formCot.cotImps %}
+                                            <tr>
+                                                <td>
+                                                    {% if(cotizacion.estado != 'Borrador') %}
+                                                        {{ form_widget(formCotImp.impuesto,{ 'attr': {'class':'form-control', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formCotImp.impuesto,{ 'attr': {'class':'form-control' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(cotizacion.estado != 'Borrador') %}
+                                                        {{ form_widget(formCotImp.antesImpItem,{ 'attr': {'class':'form-control', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formCotImp.antesImpItem,{ 'attr': {'class':'form-control' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {{ formCotImp.vars.value.porcentaje |number_format(2, '.', ',') }}%
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ formCotImp.vars.value.total|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="pull-right"><strong>Subtotal Impuestos:</strong> <span
+                                                class="text-warning"
+                                                style="background-color: #2b2b2b">
+                                            {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                            {% endif %}
+                                            {{ impuestos|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                            {% endif %}
+                    </span>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END panel-->
+                </div>
+            </div>
+        </div>
+        <div style="display: none;">{{ form_rest(formCot) }}</div>
+        {{ form_end(formCot) }}
+    </section>
+{% endblock %}
+
+{% block modal %}
+    {{ form_start(formFactura) }}
+    <div class="modal fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1"
+         id="myModal"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="box-title">Datos de Factura</h3>
+                </div>
+                <br/>
+
+                <div class="box-body">
+                    <div class="form-group" style="padding-bottom: 40px;">
+                        <label style="text-align: right" class="col-sm-3 control-label">Cliente</label>
+
+                        <div class="col-sm-9">{{ form_widget(formFactura.cliente) }}</div>
+                    </div>
+                    <div class="form-group" style="padding-bottom: 40px;">
+                        <label style="text-align: right" class="col-sm-3 control-label">Grupo</label>
+
+                        <div class="col-sm-9">{{ form_widget(formFactura.tdocConf) }}</div>
+                    </div>
+                    <div class="form-group" style="padding-bottom: 40px;">
+                        <label style="text-align: right;" class="col-sm-3 control-label">Fecha Factura</label>
+
+                        <div class="col-sm-5">
+                            <div class="datetimepicker input-group date mb-lg" data-pick-time="false">
+                                {{ form_widget(formFactura.fecha) }}
+                                <span class="input-group-addon">
+                                <span class="fa-calendar fa">
+                                </span>
+                            </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Cancelar</button>
+                    {{ form_widget(formFactura.Guardar,{ 'attr': {'class':'btn btn-primary' }}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(formFactura) }}
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script src="{{ asset('js/generalMethods.js') }}"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                moment.locale('es');
+                initSelects();
+                $('#datetimepicker1').datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    locale: 'es',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-o',
+                        clear: 'fa fa-trash-o'
+                    }
+                });
+
+                $('#datetimepicker2').datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    locale: 'es',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-o',
+                        clear: 'fa fa-trash-o'
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        var initSelects = function () {
+            var selects = document.getElementsByTagName('select');
+            for (var i = 0; i < selects.length; i++) {
+                if ($(selects[i]).hasClass('form-item')) {
+                    $(selects[i]).select2({
+                        language: "es",
+                        tags: true,
+                        placeholder: "Seleccione un producto",
+                        allowClear: true,
+                        width: 200
+                    }).on("select2:select", function (e) {
+                        var self = this;
+                        if (isNaN(e.params.data.id)) {
+                            if (confirm("¿Está seguro que desea crear el nuevo producto '" + e.params.data.id + "'?")) {
+                                $.post(Routing.generate('nomencladores_createProdViaAjax'), {product: e.params.data.id})
+                                        .done(function (data) {
+                                            data = JSON.parse(data);
+                                            e.params.data.id = data.id;
+                                            e.params.data.text = data.nombre;
+                                            self.options[self.options.length - 1].value = data.id;
+                                            self.options[self.options.length - 1].text = data.nombre;
+                                            $($(self.parentNode).siblings()[0]).children("textarea").val(data.descripcion);
+                                        })
+                                        .fail(function () {
+                                            alert("Lo sentimos, ha ocurrido un error tratando de crear el producto nuevo.")
+                                            self.options[self.options.length - 1].remove();
+                                        });
+                            }
+                            else {
+                                this.options[this.options.length - 1].remove();
+                                $(this).select2({
+                                    language: "es",
+                                    tags: true,
+                                    placeholder: "Seleccione un producto",
+                                    allowClear: true,
+                                    width: 200
+                                }).val(null).trigger("change");
+                            }
+                        }
+                        else {
+                            $.post(Routing.generate('nomencladores_getProdDesc'), {product: e.params.data.id})
+                                    .done(function (data) {
+                                        if (data != -1) {
+                                            data = JSON.parse(data);
+                                            $($(self.parentNode).siblings()[0]).children("textarea").val(data.descripcion);
+                                        }
+                                        else alert("Lo sentimos, ha ocurrido un error tratando de recuperar la descripcion del producto.")
+                                    })
+                                    .fail(function () {
+                                        alert("Lo sentimos, ha ocurrido un error tratando de recuperar la descripcion del producto.")
+                                    });
+                        }
+                    }).trigger("change");
+                }
+                else if ($(selects[i]).hasClass('form-tax'))
+                    $(selects[i]).select2({
+                        language: "es",
+                        allowClear: true,
+                        width: 210,
+                        placeholder: "Seleccione impuesto"
+                    });
+                else
+                    $(selects[i]).select2({
+                        language: "es",
+                        width: 200
+                    });
+            }
+        };
+
+        var doThisAfterInsert = function () {
+            setTimeout(function () {
+                initSelects();
+            }, 0);
+        };
+    </script>
+{% endblock %}

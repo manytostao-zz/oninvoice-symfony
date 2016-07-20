@@ -1,0 +1,19 @@
+nomenclador_crudproducto:
+    resource: "@NomencladoresBundle/Resources/config/routing/productos.yml"
+    prefix:   /productos
+
+nomenclador_crudmoneda:
+    resource: "@NomencladoresBundle/Resources/config/routing/monedas.yml"
+    prefix:   /monedas
+
+nomenclador_crudgrupo:
+    resource: "@NomencladoresBundle/Resources/config/routing/grupos.yml"
+    prefix:   /grupos
+
+nomenclador_crudmetodos_pago:
+    resource: "@NomencladoresBundle/Resources/config/routing/metodos_pago.yml"
+    prefix:   /metodos_pago
+
+nomenclador_crudimpuesto:
+    resource: "@NomencladoresBundle/Resources/config/routing/impuestos.yml"
+    prefix:   /impuestos

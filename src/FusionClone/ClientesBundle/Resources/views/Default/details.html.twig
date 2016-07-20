@@ -1,0 +1,478 @@
+{% extends '::frontend.html.twig' %}
+
+{% block page_level_css %}
+    <!-- Data Table styles-->
+    <link rel="stylesheet"
+          href="{{ asset('vendor/datatable/extensions/datatable-bootstrap/css/dataTables.bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/datatable/extensions/ColVis/css/dataTables.colVis.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/clientes/css/cliente.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/facturas/css/factura.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/cotizaciones/css/cotizacion.css') }}">
+{% endblock %}
+
+{% block header %}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative"> Cliente
+        </h1>
+        {% if is_granted('ROLE_USUARIO') %}
+            <div class="pull-right">
+                <a class="btn btn-circle" title="Ir a Listado" href={{ path('clientes_homepage') }}>
+                    <em class="fa fa-list"></em></a>
+                <a class="btn btn-default" href={{ path('clientes_edit', {'id':cliente.id}) }}>Editar</a>
+                <a class="btn btn-default"
+                   onclick="return confirm('Si se elimina este cliente también puede eliminar todas las facturas, cotización y pagos relacionados con este cliente. ' +
+                '¿Está seguro que desea eliminar este cliente?');"
+                   href={{ path('clientes_delete', {'id': cliente.id}) }}>
+                    <i class="fa fa-trash"></i>
+                    Borrar
+                </a>
+            </div>
+        {% endif %}
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <!-- START panel-->
+                <div class="panel panel-default">
+                    <div class="panel-heading">{{ cliente.Nombre }}</div>
+                    <div class="panel-body">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">Detalles</a>
+                            </li>
+                            <li class=""><a href="#profile" data-toggle="tab">Cotizaciones</a>
+                            </li>
+                            <li class=""><a href="#messages" data-toggle="tab">Facturas</a>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane fade active in">
+                                <div style="text-align: left;">
+                                    <p>
+                                        <strong>Total Facturado:</strong>
+                                        {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                        {% endif %}
+                                        {{ cliente.facturado|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                        {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                        {% endif %}
+                                        <br>
+                                        <strong>Total Pagado:</strong>
+                                        {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                        {% endif %}
+                                        {{ cliente.pagado|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                        {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                        {% endif %}
+                                        <br>
+                                        <strong>Total Saldo:</strong>
+                                        {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                        {% endif %}
+                                        {{ cliente.saldo|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                        {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                            {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                <table role="grid" id="clientestable"
+                                       class="table table-striped table-hover dataTable no-footer">
+                                    <tbody>
+                                    <tr role="row">
+                                        <td>
+                                            Direcci&oacute;n
+                                        </td>
+                                        <td>
+                                            <p style="text-align: right">{{ cliente.direccion }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Email
+                                        </td>
+                                        <td>
+                                            <p style="text-align: right">{{ cliente.email }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Tel&eacute;fono
+                                        </td>
+                                        <td>
+                                            <p style="text-align: right">{{ cliente.telefono }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            M&oacute;vil
+                                        </td>
+                                        <td>
+                                            <p style="text-align: right">{{ cliente.movil }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Fax
+                                        </td>
+                                        <td>
+                                            <p style="text-align: right">{{ cliente.fax }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            Web
+                                        </td>
+                                        <td>
+                                            <p style="text-align: right">{{ cliente.webpage }}</p>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div id="profile" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <table role="grid" id="cotizacionesTable"
+                                                       class="table table-responsive table-striped table-hover dataTable no-footer">
+                                                    <thead>
+                                                    <tr role="row">
+                                                        <th>
+                                                            Id
+                                                        </th>
+                                                        <th>
+                                                            Estado
+                                                        </th>
+                                                        <th>
+                                                            C&oacute;digo
+                                                        </th>
+                                                        <th>
+                                                            Vencimiento
+                                                        </th>
+                                                        <th>
+                                                            Cliente
+                                                        </th>
+                                                        <th style="text-align: center">
+                                                            Importe
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="messages" class="tab-pane fade">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <table role="grid" id="facturasTable"
+                                                       class="table table-responsive table-striped table-hover dataTable no-footer">
+                                                    <thead>
+                                                    <tr role="row">
+                                                        <th>
+                                                            Id
+                                                        </th>
+                                                        <th>
+                                                            Estado
+                                                        </th>
+                                                        <th>
+                                                            C&oacute;digo
+                                                        </th>
+                                                        <th>
+                                                            Vencimiento
+                                                        </th>
+                                                        <th>
+                                                            Cliente
+                                                        </th>
+                                                        <th style="text-align: center">
+                                                            Importe
+                                                        </th>
+                                                        <th style="text-align: center">
+                                                            Saldo
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END panel-->
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block modal %}
+    {{ form_start(formPago) }}
+    <div class="modal fade" aria-hidden="true" aria-labelledby="myModalLabel"
+         role="dialog" tabindex="-1" id="myModal"
+         style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" aria-hidden="true" data-dismiss="modal"
+                            type="button">×
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">Introducir Pago</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Importe:</label>
+
+                        <div>{{ form_widget(formPago.importe,{ 'attr': {'class':'form-control' }}
+                            ) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Fecha</label>
+
+                        <div class="datetimepicker input-group date mb-lg"
+                             data-pick-time="false">
+                            {{ form_widget(formPago.fecha) }}
+                            <span class="input-group-addon">
+                                                                <span class="fa-calendar fa">
+                                                                </span>
+                                                            </span>
+                        </div>
+
+                    </div>
+                    <div class="form-group">
+                        <label>M&eacute;todo de Pago:</label>
+
+                        <div>{{ form_widget(formPago.metodo,{ 'attr': {'class':'form-control' }}
+                            ) }}
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Nota:</label>
+
+                        <div>{{ form_widget(formPago.nota,{ 'attr': {'class':'form-control' }}
+                            ) }}
+                        </div>
+                    </div>
+                </div>
+                {{ form_widget(formPago.factId) }}
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">
+                        Cerrar
+                    </button>
+                    {{ form_widget(formPago.Guardar,{ 'attr': {'class':'btn btn-primary' }}
+                    ) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(formPago) }}
+
+    <div aria-hidden="false" role="dialog" tabindex="-1" id="delete" class="modal fade bs-modal-sm in"
+         style="display: none;">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button aria-hidden="true" data-dismiss="modal" class="close" type="button"></button>
+                    <h4 class="modal-title"><i class="fa fa-warning"></i>&nbsp;Confirmación</h4>
+                </div>
+                <div class="modal-body">
+                    ¿Está seguro que desea eliminar esta cotizaci&oacute;n?
+                </div>
+                <div class="modal-footer">
+                    <a id="deleteButton" class="btn btn-primary">Si</a>
+                    <button data-dismiss="modal" class="btn default" type="button">No</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+    <!-- Data Table Scripts-->
+    <script src="{{ asset('vendor/datatable/media/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatable/extensions/datatable-bootstrap/js/dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/datatable/extensions/datatable-bootstrap/js/dataTables.bootstrapPagination.js') }}"></script>
+    <script src="{{ asset('vendor/datatable/extensions/ColVis/js/dataTables.colVis.min.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                moment.locale('es');
+                var oTable;
+                oTable = $('#cotizacionesTable').dataTable(
+                        {
+                            "language": {
+                                "lengthMenu": " _MENU_ registros",
+                                "sSearch": "Buscar",
+                                "sZeroRecords": "No se encontraron registros",
+                                "sEmptyTable": "No hay registros disponibles: cambie los criterios de filtrado",
+                                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+                                "sInfoFiltered": "(filtrado de _MAX_ registros)",
+                                "oPaginate": {
+                                    sFirst: "<i class='fa fa-backward' title='Primero'></i>",
+                                    sLast: "<i class='fa fa-forward' title='Último'></i>",
+                                    sNext: "<i class='fa fa-caret-right' title='Siguiente'></i>",
+                                    sPrevious: "<i class='fa fa-caret-left' title='Anterior'></i>"
+                                },
+                                "sPaginationType": "full_numbers",
+                                "sProcessing": "Procesando..."
+                            },
+                            "aLengthMenu": [5, 10, 15],
+                            "sPaginationType": "full_numbers",
+                            "pageLength": 10,
+                            "bLengthChange": true,
+                            "processing": true,
+                            "bJQueryUI": true,
+                            "bServerSide": true,
+                            "ajax": {
+                                "url": Routing.generate('cotizaciones_listar'),
+                                "type": "POST"
+                            },
+                            "dom": "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", // horizontal scrollable datatable
+                            "columnDefs": [{
+                                "visible": false,
+                                "targets": [0]
+                            }, {
+                                "class": "column-right",
+                                "targets": [5]
+                            }, {
+                                "class": "column-center",
+                                "targets": [3]
+                            }]
+                            {% if app.user.cliente is null %},
+                            "drawCallback": $cotizacionesTable.postDraw
+                            {% endif %}
+                        }
+                );
+                $('div .dataTables_length select').select2({language:'es'});
+                $('div.dataTables_filter input').addClass('form-control input-inline input-sm');
+                {% if app.user.cliente is null %}
+                var nCloneTh = document.createElement('th');
+                nCloneTh.style.width = '20%';
+                nCloneTh.innerHTML = "<strong>Operaciones</strong>";
+                nCloneTh.style.textAlign = "center";
+
+                oTable.find('thead tr').each(function () {
+                    this.insertBefore(nCloneTh, this.childNodes[5]);
+                });
+                {% endif %}
+            });
+        });
+    </script>
+    <script src="{{ asset('bundles/cotizaciones/js/cotizacionesDatatable.js') }}"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                moment.locale('es');
+                $('#formPago_metodo').select2({
+                    language:"es",
+                    width: 200,
+                    minimumResultsForSearch: Infinity
+                });
+
+                $('#datetimepicker2').datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    locale: 'es',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-o',
+                        clear: 'fa fa-trash-o'
+                    }
+                });
+
+                var oTable;
+                oTable = $('#facturasTable').dataTable(
+                        {
+                            "language": {
+                                "lengthMenu": " _MENU_ registros",
+                                "sSearch": "Buscar",
+                                "sZeroRecords": "No se encontraron registros",
+                                "sEmptyTable": "No hay registros disponibles: cambie los criterios de filtrado",
+                                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+                                "sInfoFiltered": "(filtrado de _MAX_ registros)",
+                                "oPaginate": {
+                                    sFirst: "<i class='fa fa-backward' title='Primero'></i>",
+                                    sLast: "<i class='fa fa-forward' title='Último'></i>",
+                                    sNext: "<i class='fa fa-caret-right' title='Siguiente'></i>",
+                                    sPrevious: "<i class='fa fa-caret-left' title='Anterior'></i>"
+                                },
+                                "sPaginationType": "full_numbers",
+                                "sProcessing": "Procesando..."
+                            },
+                            "aLengthMenu": [5, 10, 15],
+                            "sPaginationType": "full_numbers",
+                            "pageLength": 10,
+                            "bLengthChange": true,
+                            "processing": true,
+                            "bJQueryUI": true,
+                            "bServerSide": true,
+                            "ajax": {
+                                "url": Routing.generate('facturas_listar'),
+                                "type": "POST"
+                            },
+                            "dom": "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", // horizontal scrollable datatable
+                            "columnDefs": [{
+                                "visible": false,
+                                "targets": [0]
+                            }, {
+                                "class": "column-right",
+                                "targets": [5, 6]
+                            }, {
+                                "class": "column-center",
+                                "targets": [3]
+                            }]
+                            {% if app.user.cliente is null %},
+                            "drawCallback": $facturasTable.postDraw
+                            {% endif %}
+                        }
+                );
+                $('div .dataTables_length select').select2({language:"es", width: 90});
+                $('div.dataTables_filter input').addClass('form-control input-inline input-sm');
+                {% if app.user.cliente is null %}
+                var nCloneTh = document.createElement('th');
+                nCloneTh.style.width = '20%';
+                nCloneTh.innerHTML = "<strong>Operaciones</strong>";
+                nCloneTh.style.textAlign = "center";
+
+                oTable.find('thead tr').each(function () {
+                    this.insertBefore(nCloneTh, this.childNodes[6]);
+                });
+                {% endif %}
+            });
+        });
+    </script>
+    <script src="{{ asset('bundles/facturas/js/facturasDatatable.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,49 @@
+#Productos
+nomencladores_listProd:
+    pattern:  /
+    defaults: { _controller: NomencladoresBundle:Producto:listProd }
+
+nomencladores_createProd:
+    pattern:  /crear/
+    defaults: {_controller: NomencladoresBundle:Producto:createProd }
+
+nomencladores_editProd:
+    pattern: /{id}/edit/
+    defaults: {_controller: NomencladoresBundle:Producto:editProd }
+    options:
+        expose: true
+
+nomencladores_deleteProd:
+    pattern:  /{id}/borrar/
+    defaults: {_controller: NomencladoresBundle:Producto:deleteProd }
+    options:
+        expose: true
+
+#AJAXSOURCE
+nomencladores_listProdAjax:
+    pattern:  /lista_ajax/
+    defaults: {_controller: NomencladoresBundle:Producto:list }
+    options:
+        expose: true
+
+nomencladores_prodsAjax:
+    pattern:  /ajax/
+    defaults: {_controller: NomencladoresBundle:Producto:prodsAjax }
+    options:
+        expose: true
+
+nomencladores_createProdViaAjax:
+    pattern:  /crear/ajax/
+    defaults: {_controller: NomencladoresBundle:Producto:createProdViaAjax }
+    options:
+        expose: true
+
+nomencladores_getProdDesc:
+    pattern:  /descripcion/ajax/
+    defaults: {_controller: NomencladoresBundle:Producto:getProdDesc }
+    options:
+        expose: true
+
+nomencladores_saveProd:
+    pattern:  /salvar/
+    defaults: {_controller: NomencladoresBundle:Producto:saveProd }

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="ie ie6 lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>
+<html class="ie ie7 lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>
+<html class="ie ie8 lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9]>
+<html class="ie ie9" lang="en"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-ie">
+<!--<![endif]-->
+
+<head>
+    <!-- Meta-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <title>Factura {{ factura.codigo }}</title>
+</head>
+<body style="color: #656565; font-family: 'PT Sans',sans-serif;">
+<section class="main-content" style="display: block; box-sizing: border-box;">
+<div class="row">
+<!-- START panel-->
+<div class="panel panel-default" style="-moz-border-bottom-colors: #EEEEEE;
+                                                    -moz-border-left-colors: #EEEEEE;
+                                                    -moz-border-right-colors: #EEEEEE;
+                                                    -moz-border-top-colors: #EEEEEE;
+                                                    border-image: none;
+                                                    border: 1px solid #EEEEEE;border-bottom-color: #D1D2D3;
+                                                    border-radius: 4px;
+                                                    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+                                                    margin-bottom: 5px;">
+<h1 style="width: 270px;
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                        line-height: 1.1;">
+    Factura
+</h1>
+<label style="font-weight: bold;">N&uacute;mero: </label><label>{{ factura.codigo }}</label><br/>
+<label style="font-weight: bold;">Fecha de
+    creaci&oacute;n: </label><label>{{ factura.fecha|date('m/d/Y') }}</label><br/>
+<label style="font-weight: bold;">Fecha de
+    vencimiento: </label><label>{{ factura.fechaVenc|date('m/d/Y') }}</label><br/>
+
+<div class="panel-body" style="padding: 150px; clear: both; border-top: solid thin; width: 10%">
+
+<!-- Tab panes -->
+<table>
+    <tr>
+        <td>
+            <div class="pull-left" style="text-align: left; float: left !important;">
+                {% if usuario is not null %}
+                    <h4>Desde</h4>
+                    <br>
+                    <strong>{{ usuario.compannia }}</strong>
+                    <br>
+                    {{ usuario.nombre }}
+                    <br>
+                    {{ usuario.direccion }}
+                    <br>
+                    Tel&eacute;fono: {{ usuario.telefono }}
+                    <br>
+                    Contacto: {{ usuario.email }}
+                {% endif %}
+            </div>
+        </td>
+        <td>
+            <div></div>
+        </td>
+        <td>
+            <div class="pull-right" style="text-align: left; float: right !important;">
+                {% if factura.cliente is not null %}
+                    <h4>Para</h4>
+                    <br>
+                    {{ factura.cliente.nombre }}
+                    <br>
+                    {{ factura.cliente.direccion }}
+                    <br>
+                    Tel&eacute;fono: {{ factura.cliente.telefono }}
+                    <br>
+                    Contacto: {{ factura.cliente.email }}
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+</table>
+<!-- END panel-->
+<div class="clearfix" style="clear: both;"></div>
+
+<table id="item-table" class="table table-hover" style="border-collapse: collapse;
+                                                                                border-spacing: 0;
+                                                                                background-color: rgba(0, 0, 0, 0);
+                                                                                max-width: 100%;
+                                                                                width: 100%;
+                                                                                border: 0 #EEEEEE;
+                                                                                border-top: #AAAAAA;
+                                                                                margin-bottom: 0;
+                                                                                text-align: left;
+                                                                                font-size: 10px">
+    <thead>
+    <tr style="background-color: lavender; min-width: 500px; font-weight: bold">
+        <th>Producto</th>
+        <th>Descripción</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+        <th>Tasa de Impuesto</th>
+        <th style="text-align: right">Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for factItem in factura.factItems %}
+        <tr style="background-color: #F0F0F0">
+            <td>
+                {{ factItem.producto }}
+            </td>
+            <td>
+                {{ factItem.descripcion }}
+            </td>
+            <td style="text-align: center">
+                {{ factItem.cantidad }}
+            </td>
+            <td style="text-align: center">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+                {{ factItem.precio|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+            </td>
+            <td>
+                {{ factItem.impuesto }}
+            </td>
+            <td style="text-align: right">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+                {{ factItem.total|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<table>
+    <tr>
+        <td>
+            <div></div>
+        </td>
+        <td>
+            <div></div>
+        </td>
+        <td>
+            <div class="col-md-12"
+                 style="width: 30%; padding: 0px; margin-top: -500px; font-size: 10px; float: right; text-align: left">
+                <table>
+                    <tr>
+                        <td>
+                            <strong>Subtotal:</strong>
+                        </td>
+                        <td style="text-align: right">
+                            {% set subtotal = 0 %}
+                            {% for factItem in factura.factItems %}
+                                {% set subtotal = subtotal + factItem.total %}
+                            {% endfor %}
+                            {% set impuestos = 0 %}
+                            {% for factImp in factura.factImps %}
+                                {% set impuestos = impuestos + factImp.total %}
+                            {% endfor %}
+
+                            {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                            {{ subtotal |number_format(3, '.', ',') }}
+                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Impuesto:</strong>
+                        </td>
+                        <td style="text-align: right">
+                            {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                            {{ impuestos |number_format(3, '.', ',') }}
+                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Total:</strong>
+                        </td>
+                        <td style="text-align: right">
+                            {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                            {{ (subtotal + impuestos) |number_format(3, '.', ',') }}<br />
+                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                            {% if factura.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}
+                                ( {{ factura.moneda.simbolo }} {{ ((subtotal + impuestos) * factura.moneda.tasa) |number_format(3, factura.moneda.signDecimal, factura.moneda.signMillares) }}
+                                )
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Pagado:</strong>
+                        </td>
+                        <td style="text-align: right">
+                            {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                            {{ (factura.importe - factura.saldo) |number_format(3, '.', ',') }}
+                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}<br />
+                            {% if factura.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}(
+                                {% if factura.moneda.ubicaSimbol %}
+                                    {{ factura.moneda.simbolo }}
+                                {% endif %}
+                                {{ ((factura.importe - factura.saldo) * factura.moneda.tasa) |number_format(3, factura.moneda.signDecimal, factura.moneda.signMillares) }}
+                                )
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <strong>Saldo:</strong>
+                        </td>
+                        <td style="text-align: right">
+                            {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}
+                            {{ factura.saldo |number_format(3, '.', ',') }}
+                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                            {% endif %}<br />
+                            {% if factura.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}
+                                ({% if factura.moneda.ubicaSimbol %}
+                                {{ factura.moneda.simbolo }}
+                            {% endif %}
+                                {{ ((factura.saldo) * factura.moneda.tasa) |number_format(3, factura.moneda.signDecimal, factura.moneda.signMillares) }}
+                                {% if not factura.moneda.ubicaSimbol %}{{ factura.moneda.simbolo }}
+                                {% endif %})
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </td>
+    </tr>
+</table>
+</div>
+
+</div>
+</div>
+</section>
+</body>
+</html>

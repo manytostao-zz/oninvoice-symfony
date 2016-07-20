@@ -1,0 +1,28 @@
+security:
+    encoders:
+        FusionClone\UsuariosBundle\Entity\Usuario: {algorithm: sha512, iterations: 10}
+
+    providers:
+        appusers:
+            entity: {class: FusionClone\UsuariosBundle\Entity\Usuario, property: email}
+
+    firewalls:
+        frontend:
+            pattern:  ^/*
+            anonymous: ~
+            form_login:
+                login_path: usuarios_login
+                check_path: usuarios_login_check
+                default_target_path: otros_homepage
+                always_use_default_target_path: true
+            logout:
+                path: usuarios_logout
+            remember_me:
+                key: fusionClone123
+                lifetime: 3600
+
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: ^/registro, roles: IS_AUTHENTICATED_ANONYMOUSLY}
+        - { path: ^/facturas/salvar/, roles: ROLE_USUARIO }
+        - { path: ^/*, roles: [ROLE_USUARIO, ROLE_CLIENTE]}

@@ -1,0 +1,39 @@
+{% extends '::frontend.html.twig' %}
+{% block header %}
+    {{ form_start(formPago) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Formulario de Método de Pago
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formPago.Guardar) }}</div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+    {% if (form_errors(formPago)) %}
+        <div class="alert alert-danger">{{ form_errors(formPago) }}</div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <br/>
+
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            {{ form_widget(formPago.nombre) }}
+                            <p class="help-block">Nombre de m&eacute;todo de pago, e.j. "Tarjeta de Cr&eacute;dito".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>{{ form_end(formPago) }}
+{% endblock %}

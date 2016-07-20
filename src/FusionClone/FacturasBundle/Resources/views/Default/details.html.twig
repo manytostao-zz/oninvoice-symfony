@@ -1,0 +1,868 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/cotizaciones/css/cotizacion.css') }}">
+{% endblock %}
+{% block body %}
+    <section class="main-content" style="padding: 5px;">
+        {{ form_start(formFactura) }}
+        {% for mensaje in app.session.flashbag.get('info_add') %}
+            <div class="alert alert-success alert-dismissible">{{ mensaje }}</div>
+        {% endfor %}
+        {% for mensaje in app.session.flashbag.get('info_edit') %}
+            <div class="alert alert-info alert-dismissible">{{ mensaje }}</div>
+        {% endfor %}
+        {% for mensaje in app.session.flashbag.get('info_delete') %}
+            <div class="alert alert-warning alert-dismissible">{{ mensaje }}</div>
+        {% endfor %}
+        {% for mensaje in app.session.flashbag.get('info_error') %}
+            <div class="alert alert-danger alert-dismissible">{{ mensaje }}</div>
+        {% endfor %}
+        {% if (form_errors(formFactura)) %}
+            <div class="alert alert-danger">{{ form_errors(formFactura) }}</div>
+        {% endif %}
+        {% if (form_errors(formFactura.tasa)) %}
+            <div class="alert alert-danger">{{ form_errors(formFactura.tasa) }}</div>
+        {% endif %}
+        {% if (form_errors(formFactura.fecha)) %}
+            <div class="alert alert-danger">{{ form_errors(formFactura.fecha) }}</div>
+        {% endif %}
+        {% if (form_errors(formFactura.fechaVenc)) %}
+            <div class="alert alert-danger">{{ form_errors(formFactura.fechaVenc) }}</div>
+        {% endif %}
+        {% for formFactItem in formFactura.factItems %}
+            {% if (form_errors(formFactItem.producto)) %}
+                <div class="alert alert-danger">{{ form_errors(formFactItem.producto) }}</div>
+            {% endif %}
+            {% if (form_errors(formFactItem.cantidad)) %}
+                <div class="alert alert-danger">{{ form_errors(formFactItem.cantidad) }}</div>
+            {% endif %}
+            {% if (form_errors(formFactItem.precio)) %}
+                <div class="alert alert-danger">{{ form_errors(formFactItem.precio) }}</div>
+            {% endif %}
+        {% endfor %}
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- START panel-->
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="col-sm-6"><h3 style="width: 270px;">
+                                    <label>Factura #:
+                                        {% if(factura.estado != 'Borrador') %}
+                                            {{ form_widget(formFactura.codigo, {'attr':{'disabled':'true' }}) }}
+                                        {% else %}
+                                            {{ form_widget(formFactura.codigo) }}
+                                        {% endif %}
+                                    </label></h3>
+                            </div>
+
+                            <div class="col-sm-6">
+                                <div class="pull-right">
+                                    <a class="btn btn-circle" title="Ir a Listado" href={{ path('facturas_homepage') }}>
+                                        <em class="fa fa-list"></em></a>
+                                    {% if is_granted('ROLE_USUARIO') %}
+                                        <div class="btn-group">
+                                            <button class="btn btn-circle dropdown-toggle" data-toggle="dropdown"
+                                                    type="button"
+                                                    aria-expanded="false">
+                                                Operaciones
+                                                <span class="caret"></span>
+                                            </button>
+                                            <ul class="dropdown-menu" role="menu">
+                                                {% if factura.estado == 'Enviado' or  factura.estado == 'Vencido' %}
+                                                    <li>
+                                                        <a title="Insertar Pago"
+                                                           data-target="#myModal" data-toggle="modal" href="#">
+                                                            <em class="fa fa-credit-card"></em> Insertar Pago</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <a title="Enviar Email"
+                                                           href={{ path('facturas_send_mail', {'id': factura.id}) }}>
+                                                            <em class="fa fa-envelope-o"></em> Enviar Email</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                {% endif %}
+                                                {% if factura.estado != 'Cancelado' %}
+                                                    <li>
+                                                        <a data-target="#facRec" data-toggle="modal" href="#">
+                                                            <em class="fa fa-refresh"> </em> Recurrencia</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                {% endif %}
+                                                <li>
+                                                    <a title="Exportar a PDF"
+                                                       href={{ path('facturas_preview', {'id': factura.id, 'preview':1}) }}>
+                                                        <em class="fa fa-print"></em> Exportar a PDF</a>
+                                                </li>
+                                                {% if factura.estado != 'Borrador' and factura.estado != 'Cancelado' %}
+
+                                                    <li class="divider"></li>
+                                                    <li>
+                                                        <a href="#"
+                                                           onclick="if (confirm('¿Está seguro que desea cancelar esta factura?'))
+                                                                   document.location = '{{ path('facturas_cancel', {'id':factura.id}) }}'">
+                                                            <em class="fa fa-ban text-danger"> </em> Cancelar</a>
+                                                    </li>
+                                                {% endif %}
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if factura.estado == 'Borrador' %}
+                                        {{ form_widget(formFactura.Guardar) }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#home" data-toggle="tab">Datos Generales</a>
+                            </li>
+                            <li class=""><a href="#profile" data-toggle="tab">Líneas de Documento</a>
+                            </li>
+                            <li class=""><a href="#messages" data-toggle="tab">Impuestos</a>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div id="home" class="tab-pane fade active in">
+                                {% if usuario is not null %}
+                                    <div class="pull-left" style="text-align: left;">
+                                        <h4>Desde</h4>
+                                        <br>
+                                        <strong>{{ usuario.compannia }}</strong>
+                                        <br>
+                                        {{ usuario.nombre }}
+                                        <br>
+                                        {{ usuario.direccion }}
+                                        <br>
+                                        Tel&eacute;fono: {{ usuario.telefono }}
+                                        <br>
+                                        Contacto: {{ usuario.email }}
+                                    </div>
+                                {% endif %}
+                                {% if factura.cliente is not null %}
+                                    <div class="pull-right" style="text-align: left;">
+                                        <h4>Para</h4>
+                                        <br>
+                                        <strong><a href={{ path('clientes_details', {'id':factura.cliente.id}) }}>{{ factura.cliente.nombre }}</a></strong>
+                                        <br>
+                                        {{ factura.cliente.direccion }}
+                                        <br>
+                                        Tel&eacute;fono: {{ factura.cliente.telefono }}
+                                        <br>
+                                        Contacto:{{ factura.cliente.email }}
+                                    </div>
+                                {% endif %}
+                                <div class="clearfix"></div>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <table role="grid" id="clientestable"
+                                               class="table table-striped table-hover dataTable no-footer">
+                                            <tbody>
+                                            <tr role="row">
+                                                <td>
+                                                    Fecha
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            <div id="datetimepicker1"
+                                                                 class="input-group date datetimepicker">
+                                                                {% if(factura.estado != 'Borrador') %}
+                                                                    {{ form_widget(formFactura.fecha, {'attr':{'disabled':'true' }}) }}
+                                                                {% else %}
+                                                                    {{ form_widget(formFactura.fecha, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}) }}
+                                                                    <span class="input-group-addon">
+                                                                <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Fecha de Vencimiento
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            <div id="datetimepicker2"
+                                                                 class="input-group date datetimepicker">
+                                                                {% if(factura.estado != 'Borrador') %}
+                                                                    {{ form_widget(formFactura.fechaVenc, {'attr':{'disabled':'true' }}) }}
+                                                                {% else %}
+                                                                    {{ form_widget(formFactura.fechaVenc, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}) }}
+                                                                    <span class="input-group-addon">
+                                                                <span class="fa fa-calendar"></span>
+                                                                </span>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Estado
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            {% if(factura.estado != 'Borrador') %}
+                                                                {{ form_widget(formFactura.estado, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formFactura.estado) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Moneda
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            {% if(factura.estado != 'Borrador') %}
+                                                                {{ form_widget(formFactura.moneda, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formFactura.moneda) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    Tasa
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div class="col-sm-10 pull-right">
+                                                            {% if(factura.estado != 'Borrador') %}
+                                                                {{ form_widget(formFactura.tasa, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formFactura.tasa) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div>
+                                                            T&eacute;rminos
+                                                            {% if(factura.estado != 'Borrador') %}
+                                                                {{ form_widget(formFactura.terms, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formFactura.terms) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="form-group">
+                                                        <div>
+                                                            Pie
+                                                            {% if(factura.estado != 'Borrador') %}
+                                                                {{ form_widget(formFactura.pie, {'attr':{'disabled':'true' }}) }}
+                                                            {% else %}
+                                                                {{ form_widget(formFactura.pie) }}
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Subtotal:</strong>
+                                            {% set subtotal = 0 %}
+                                            {% for formFactItem in formFactura.factItems %}
+                                                {% set subtotal = subtotal + formFactItem.vars.value.total %}
+                                            {% endfor %}
+                                            {% set impuestos = 0 %}
+                                            {% for formFactImp in formFactura.factImps %}
+                                                {% set impuestos = impuestos + formFactImp.vars.value.total %}
+                                            {% endfor %}
+
+                                            <span class="pull-right">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}{{ subtotal |number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                {% endif %}
+            </span>
+                                        </div>
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Impuesto:</strong>
+
+            <span class="pull-right">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}{{ impuestos |number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+            </span>
+
+                                        </div>
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Total:</strong>
+                                            {{ form_widget(formFactura.importe,{ 'attr': {'value':(subtotal - impuestos) }}) }}
+                                            <span class="pull-right">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}{{ (subtotal + impuestos) |number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                {% endif %}
+            </span>
+                                            {% if factura.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}
+                                                <br/>
+                                                <span class="pull-right">({{ factura.moneda.simbolo }}{{ ((subtotal + impuestos) * factura.moneda.tasa) |number_format(3, factura.moneda.signDecimal, factura.moneda.signMillares) }}
+                                                    )</span>
+                                                <br/>
+                                            {% endif %}
+
+                                        </div>
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Pagado:</strong>
+            <span class="pull-right">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}{{ (factura.importe - factura.saldo) |number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+            </span>
+                                            {% if factura.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}
+                                                <br/>
+                                                <span class="pull-right">(
+                                                    {% if factura.moneda.ubicaSimbol %}
+                                                        {{ factura.moneda.simbolo }}
+                                                    {% endif %}{{ ((factura.importe - factura.saldo) * factura.moneda.tasa) |number_format(3, factura.moneda.signDecimal, factura.moneda.signMillares) }}
+                                                    )</span>
+                                                <br/>
+                                            {% endif %}
+
+                                        </div>
+                                        <div class="col-sm-12 list-group-item">
+                                            <strong>Saldo:</strong>
+            <span class="pull-right">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}{{ factura.saldo |number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+            </span>
+                                            {% if factura.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}
+                                                <br/>
+                                                <span class="pull-right">(
+                                                    {% if factura.moneda.ubicaSimbol %}
+                                                        {{ factura.moneda.simbolo }}
+                                                    {% endif %}
+                                                    {{ ((factura.saldo) * factura.moneda.tasa) |number_format(3, factura.moneda.signDecimal, factura.moneda.signMillares) }}
+                                                    {% if not factura.moneda.ubicaSimbol %}{{ factura.moneda.simbolo }}
+                                                    {% endif %})</span>
+                                                <br/>
+                                            {% endif %}
+
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    {% if recurrencia[0].id is not null %}
+                                        <div class="rec">
+                                            <fieldset style="margin-bottom: 0; padding-bottom: 0;">
+                                                <legend style="font-size: 16px"><strong>Recurrencia Programada</strong>
+                                                </legend>
+                                                <div class="col-lg-12" style="padding: 0px">
+                                                    <div class="col-md-6" style="padding: 0px">Generar factura cada
+                                                        &nbsp;</div>
+                                                    <div class="col-lg-1"
+                                                         style="border: solid thin">
+                                                        <strong>{{ recurrencia[0].cada }}</strong>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <strong>
+                                                            {% if recurrencia[0].dia %}
+                                                                d&iacute;a(s)
+                                                            {% elseif recurrencia[0].semana %}
+                                                                semana(s)
+                                                            {% elseif recurrencia[0].mes %}
+                                                                mes(es)
+                                                            {% elseif recurrencia[0].anno %}
+                                                                a&ntilde;o(s)
+                                                            {% endif %}
+                                                        </strong>
+                                                    </div>
+                                                </div>
+                                                <br/>
+                                                <br/>
+
+                                                <div class="col-sm-12" style="padding: 0px">
+                                                    <div class="col-sm-4" style="padding: 0px"><label>Desde:</label>
+                                                    </div>
+                                                    <div class="col-sm-8" style="padding: 0px">
+                                                        {{ recurrencia[0].fechaIni|date('m/d/Y') }}
+                                                    </div>
+                                                </div>
+                                                <br/>
+
+                                                <div class="col-sm-12" style="padding: 0px">
+                                                    <div class="col-sm-4" style="padding: 0px"><label>Hasta:</label>
+                                                    </div>
+                                                    <div class="col-sm-8" style="padding: 0px">
+                                                        {{ recurrencia[0].fechaFin|date('m/d/Y') }}
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-12" style="padding: 0px">
+                                                    <div class="col-sm-4" style="padding: 0px">
+                                                        <label>Pr&oacute;xima:</label></div>
+                                                    <div class="col-sm-8" style="padding: 0px">
+                                                        {{ recurrencia[0].proxFecha|date('m/d/Y') }}
+                                                    </div>
+                                                </div>
+
+                                                <a class="btn btn-default pull-right"
+                                                   href="#" onclick="
+                                                        if (confirm('¿Está seguro que desea eliminar la recurrencia para esta factura?'))
+                                                        document.location = '{{ path('facturas_recDelete', {'id':recurrencia[0].id}) }}'"
+                                                   title="Eliminar recurrencia">
+                                                    <em class="fa fa-minus-circle"></em>
+                                                </a>
+                                                {% if recurrencia[0].activo %}
+                                                    <label class="pull-left">Activa</label>
+                                                    <a class="btn btn-default pull-right"
+                                                       href="{{ path('facturas_recActivate', {'id':recurrencia[0].id}) }}"
+                                                       title="Desactivar recurrencia">
+                                                        <em class="fa fa-check-circle-o"></em>
+                                                    </a>
+                                                {% else %}
+                                                    <label class="pull-left">Inactiva</label>
+                                                    <a class="btn btn-default pull-right"
+                                                       href="{{ path('facturas_recActivate', {'id':recurrencia[0].id}) }}"
+                                                       title="Activar recurrencia">
+                                                        <em class="fa fa-check-circle-o text-success"></em>
+                                                    </a>
+                                                {% endif %}
+                                            </fieldset>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div id="profile" class="tab-pane fade">
+                                <div class="table-responsive">
+                                    <table id="item-table" class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 20%;">Producto</th>
+                                            <th style="width: 25%;">Descripción</th>
+                                            <th style="width: 10%;">Cantidad</th>
+                                            <th style="width: 10%;">Precio</th>
+                                            <th style="width: 10%;">Tasa de Impuesto</th>
+                                            <th style="width: 10%; text-align: right; padding-right: 25px;">Total</th>
+                                            <th style="width: 5%;"></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody {% if(factura.estado == 'Borrador') %} class="tags"{% endif %}
+                                                data-prototype="{% filter escape %}{% include 'FacturasBundle:Prototypes:factItemsPrototype.html.twig' with {'form': formFactura.factItems.vars.prototype} %}{% endfilter %}">
+                                        {% for formFactItem in formFactura.factItems %}
+                                            <tr>
+                                                <td>
+                                                    {% if(factura.estado != 'Borrador') %}
+                                                        {{ form_widget(formFactItem.producto,{ 'attr': {'class':'form-control form-item', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formFactItem.producto,{ 'attr': {'class':'form-control form-item' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(factura.estado != 'Borrador') %}
+                                                        {{ form_widget(formFactItem.descripcion,{ 'attr': {'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formFactItem.descripcion) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(factura.estado != 'Borrador') %}
+                                                        {{ form_widget(formFactItem.cantidad,{ 'attr': {'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formFactItem.cantidad) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(factura.estado != 'Borrador') %}
+                                                        {{ form_widget(formFactItem.precio,{ 'attr': {'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formFactItem.precio) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(factura.estado != 'Borrador') %}
+                                                        {{ form_widget(formFactItem.impuesto,{ 'attr': {'class':'form-control', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formFactItem.impuesto,{ 'attr': {'class':'form-control' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ formFactItem.vars.value.total|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="pull-right"><strong>Subtotal:</strong>
+                <span class="text-warning" style="background-color: #2b2b2b">
+                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                    {% endif %}
+                    {{ subtotal|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                    {% endif %}
+                </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="messages" class="tab-pane fade">
+                                <div class="table-responsive">
+                                    <table id="item-table" class="table table-hover">
+                                        <thead>
+                                        <tr>
+                                            <th style="width: 30%;">Impuesto</th>
+                                            <th style="width: 30%;">Tipo de Ejecuci&oacute;n</th>
+                                            <th style="width: 15%;">Porcentaje</th>
+                                            <th style="width: 15%;">Total</th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody {% if(factura.estado == 'Borrador') %} class="imps"{% endif %}
+                                                data-prototype="{% filter escape %}{% include 'FacturasBundle:Prototypes:factImpsPrototype.html.twig' with {'form': formFactura.factImps.vars.prototype} %}{% endfilter %}">
+                                        {% for formFactImp in formFactura.factImps %}
+                                            <tr>
+                                                <td>
+                                                    {% if(factura.estado != 'Borrador') %}
+                                                        {{ form_widget(formFactImp.impuesto,{ 'attr': {'class':'form-control', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formFactImp.impuesto,{ 'attr': {'class':'form-control' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {% if(factura.estado != 'Borrador') %}
+                                                        {{ form_widget(formFactImp.antesImpItem,{ 'attr': {'class':'form-control', 'disabled':'true' }}) }}
+                                                    {% else %}
+                                                        {{ form_widget(formFactImp.antesImpItem,{ 'attr': {'class':'form-control' }}) }}
+                                                    {% endif %}
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {{ formFactImp.vars.value.porcentaje |number_format(2, '.', ',') }}%
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ formFactImp.vars.value.total|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div class="pull-right"><strong>Subtotal Impuestos:</strong> <span
+                                                class="text-warning"
+                                                style="background-color: #2b2b2b">
+                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                    {% endif %}
+                                            {{ impuestos|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                            {% endif %}
+                </span>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END panel-->
+                </div>
+            </div>
+        </div>
+        <div style="display: none;">{{ form_rest(formFactura) }}</div>
+        {{ form_end(formFactura) }}
+    </section>
+
+    <script type="application/javascript">
+        function cloneItemRow() {
+            var row = $('#new-item').clone().appendTo('#item-table');
+            row.removeAttr('id').addClass('item').show();
+            row.find('input[name="item_name"]').addClass('item-lookup').typeahead(null, settings);
+            typeaheadTrigger();
+            iCheck();
+        }
+    </script>
+{% endblock %}
+{% block modal %}
+<div class="modal fade" aria-hidden="true" aria-labelledby="myModalLabel"
+     role="dialog" tabindex="-1" id="myModal"
+     style="display: none;">
+    {{ form_start(formPago) }}
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close" aria-hidden="true" data-dismiss="modal"
+                        type="button">×
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Introducir Pago</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <label>Importe:</label>
+
+                            <div>{{ form_widget(formPago.importe,{ 'attr': {'class':'form-control' }}
+                                ) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>M&eacute;todo de Pago:</label>
+
+                            <div>{{ form_widget(formPago.metodo,{ 'attr': {'class':'form-control' }}
+                                ) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="col-md-6">
+                            <label>Nota:</label>
+
+                            <div>{{ form_widget(formPago.nota,{ 'attr': {'class':'form-control' }}
+                                ) }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Fecha</label>
+
+                            <div id="datetimepicker2" class="input-group date datetimepicker">
+                                {{ form_widget(formPago.fecha, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }, 'class': 'form-control'}) }}
+                                <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{ form_widget(formPago.factId) }}
+            <div class="clearfix"></div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal" type="button">
+                    Cerrar
+                </button>
+                {{ form_widget(formPago.Guardar,{ 'attr': {'class':'btn btn-primary' }}
+                ) }}
+            </div>
+        </div>
+    </div>
+    {{ form_end(formPago) }}
+    {{ form_start(formRec) }}
+    <div class="modal fade" aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1"
+         id="facRec"
+         style="display: none;">
+        <div class="facRec modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" aria-hidden="true" data-dismiss="modal" type="button">×</button>
+                    <h4 class="modal-title" id="myModalLabel">Programar Recurrencia</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-lg-12" style="padding: 0px">
+                            <div class="col-md-7" style="padding: 0px">Generar factura cada</div>
+                            <div class="col-lg-3"
+                                 style="margin-right: 10px; padding: 0px">{{ form_widget(formRec.cada, {'attr':{'style':'width: 60px' }}
+                                ) }}
+                            </div>
+                        </div>
+                    </div>
+                    <br/>
+
+                    <div class="form-group">
+                        {{ form_widget(formRec.intervalo) }}
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12" style="padding: 0px">
+                            <div class="col-sm-4" style="padding: 0px"><label>Desde:</label></div>
+                            <div class="col-sm-8" style="padding: 0px">
+                                <div id="datetimepicker3" class="input-group date datetimepicker">
+                                    {{ form_widget(formRec.fechaIni, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}
+                                    ) }}
+                                    <span class="input-group-addon">
+                                                        <span class="fa fa-calendar"></span>
+                                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                        <br/>
+
+                        <div class="col-sm-12" style="padding: 0px">
+                            <div class="col-sm-4" style="padding: 0px"><label>Hasta:</label></div>
+                            <div class="col-sm-8" style="padding: 0px">
+                                <div id="datetimepicker4" class="input-group date datetimepicker">
+                                    {{ form_widget(formRec.fechaFin, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}
+                                    ) }}
+                                    <span class="input-group-addon">
+                                                        <span class="fa fa-calendar"></span>
+                                                        </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" data-dismiss="modal" type="button">Cerrar</button>
+                    {{ form_widget(formRec.Guardar,{ 'attr': {'class':'btn btn-primary' }}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ form_end(formRec) }}
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script src="{{ asset('js/generalMethods.js') }}"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                moment.locale('es');
+                initSelects();
+                $('.datetimepicker').datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    locale: 'es',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-o',
+                        clear: 'fa fa-trash-o'
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        var initSelects = function () {
+            var selects = document.getElementsByTagName('select');
+            for (var i = 0; i < selects.length; i++) {
+                if ($(selects[i]).hasClass('form-item')) {
+                    $(selects[i]).select2({
+                        language: "es",
+                        tags: true,
+                        placeholder: "Seleccione un producto",
+                        allowClear: true,
+                        width: 200
+                    }).on("select2:select", function (e) {
+                        var self = this;
+                        if (isNaN(e.params.data.id)) {
+                            if (confirm("¿Está seguro que desea crear el nuevo producto '" + e.params.data.id + "'?")) {
+                                $.post(Routing.generate('nomencladores_createProdViaAjax'), {product: e.params.data.id})
+                                        .done(function (data) {
+                                            data = JSON.parse(data);
+                                            e.params.data.id = data.id;
+                                            e.params.data.text = data.nombre;
+                                            self.options[self.options.length - 1].value = data.id;
+                                            self.options[self.options.length - 1].text = data.nombre;
+                                            $($(self.parentNode).siblings()[0]).children("textarea").val(data.descripcion);
+                                        })
+                                        .fail(function () {
+                                            alert("Lo sentimos, ha ocurrido un error tratando de crear el producto nuevo.")
+                                            self.options[self.options.length - 1].remove();
+                                        });
+                            }
+                            else {
+                                this.options[this.options.length - 1].remove();
+                                $(this).select2({
+                                    language: "es",
+                                    tags: true,
+                                    placeholder: "Seleccione un producto",
+                                    allowClear: true,
+                                    width: 200
+                                }).val(null).trigger("change");
+                            }
+                        }
+                        else {
+                            $.post(Routing.generate('nomencladores_getProdDesc'), {product: e.params.data.id})
+                                    .done(function (data) {
+                                        if (data != -1) {
+                                            data = JSON.parse(data);
+                                            $($(self.parentNode).siblings()[0]).children("textarea").val(data.descripcion);
+                                        }
+                                        else alert("Lo sentimos, ha ocurrido un error tratando de recuperar la descripcion del producto.")
+                                    })
+                                    .fail(function () {
+                                        alert("Lo sentimos, ha ocurrido un error tratando de recuperar la descripcion del producto.")
+                                    });
+                        }
+                    }).trigger("change");
+                }
+                else if ($(selects[i]).hasClass('form-tax'))
+                    $(selects[i]).select2({
+                        language: "es",
+                        allowClear: true,
+                        width: 210,
+                        placeholder: "Seleccione impuesto"
+                    });
+                else
+                    $(selects[i]).select2({
+                        language: "es",
+                        width: 200
+                    });
+            }
+        };
+
+        var doThisAfterInsert = function () {
+            setTimeout(function () {
+                initSelects();
+            }, 0);
+        };
+    </script>
+{% endblock %}

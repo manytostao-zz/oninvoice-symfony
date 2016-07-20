@@ -1,0 +1,31 @@
+#Grupos
+nomencladores_listGrupo:
+    pattern:  /
+    defaults: { _controller: NomencladoresBundle:Grupo:listGrupo }
+
+nomencladores_createGrupo:
+    pattern:  /crear/
+    defaults: {_controller: NomencladoresBundle:Grupo:createGrupo }
+
+nomencladores_editGrupo:
+    pattern:  /{id}/editar/
+    defaults: {_controller: NomencladoresBundle:Grupo:editGrupo }
+    options:
+        expose: true
+
+nomencladores_deleteGrupo:
+    pattern:  /{id}/borrar/
+    defaults: {_controller: NomencladoresBundle:Grupo:deleteGrupo }
+    options:
+        expose: true
+
+nomencladores_saveGrupo:
+    pattern:  /salvar/
+    defaults: {_controller: NomencladoresBundle:Grupo:saveGrupo }
+
+#AJAXSOURCE
+nomencladores_listGrupoAjax:
+    pattern:  /lista_ajax/
+    defaults: {_controller: NomencladoresBundle:Grupo:list }
+    options:
+        expose: true

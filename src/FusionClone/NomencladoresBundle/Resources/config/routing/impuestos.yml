@@ -1,0 +1,31 @@
+#Impuestos
+nomencladores_listImp:
+    pattern:  /
+    defaults: { _controller: NomencladoresBundle:Impuesto:listImp }
+
+nomencladores_createImp:
+    pattern:  /crear/
+    defaults: {_controller: NomencladoresBundle:Impuesto:createImp }
+
+nomencladores_editImp:
+    pattern:  /{id}/editar/
+    defaults: {_controller: NomencladoresBundle:Impuesto:editImp }
+    options:
+        expose: true
+
+nomencladores_deleteImp:
+    pattern:  /{id}/borrar/
+    defaults: {_controller: NomencladoresBundle:Impuesto:deleteImp }
+    options:
+        expose: true
+
+nomencladores_saveImp:
+    pattern:  /salvar/
+    defaults: {_controller: NomencladoresBundle:Impuesto:saveImp }
+
+#AJAXSOURCE
+nomencladores_listImpuestoAjax:
+    pattern:  /lista_ajax/
+    defaults: {_controller: NomencladoresBundle:Impuesto:list }
+    options:
+        expose: true

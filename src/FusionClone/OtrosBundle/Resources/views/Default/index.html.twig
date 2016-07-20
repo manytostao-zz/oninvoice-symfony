@@ -1,0 +1,338 @@
+{% extends '::frontend.html.twig' %}
+{% block header %}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">Panel Resumen
+        </h1>
+
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content" style="padding: 50px">
+        <div class="row">
+            <div class="row">
+                <!-- START Secondary Widgets-->
+                <div class="col-lg-6 panel">
+                    <div class="box box-solid">
+                        <div class="box-header">
+                            <h3>Facturas</h3>
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <a href={{ path('facturas_homepage', {'status':'Borrador'}) }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done"
+                                             data-delay="1400" data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <div class="icon"><em class="fa fa-edit fa-3x"></em></div>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ totalFactBorrador|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p class="text-muted"><span class="label label-draft">Borrador</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                                <a href={{ path('facturas_homepage', {'status':'Enviado'}) }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done"
+                                             data-delay="1400"
+                                             data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <em class="fa fa-check-square-o fa-3x"></em>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ totalFactEnviadas|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p class="text-muted"><span class="label label-sent">Enviadas</span></p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="row">
+                                <a href={{ path('facturas_homepage', {'status':'Vencido'}) }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done" data-delay="1400"
+                                             data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <em class="fa fa-tachometer fa-3x"></em>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}{{ totalFactVencidas|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p class="text-muted"><span class="label label-overdue">Vencidas</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                                <a href={{ path('pagos_homepage') }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done" data-delay="1400"
+                                             data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <em class="fa fa-credit-card fa-3x"></em>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}{{ totalPagos|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p class="text-muted"><span
+                                                            class="label label-paid">Pagos Recolectados</span>
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END Secondary Widgets-->
+                <!-- START Secondary Widgets-->
+                <div class="col-lg-6 panel">
+                    <div class="box box-solid">
+                        <div class="box-header">
+                            <h3>Cotizaciones</h3>
+                        </div>
+                        <div class="box-body">
+                            <div class="row">
+                                <a href={{ path('cotizaciones_homepage', {'status':'Borrador'}) }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done"
+                                             data-delay="1400" data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <div class="icon"><em class="fa fa-edit fa-3x"></em></div>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}{{ totalCotBorrador|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p><span class="label label-draft">Borrador</span></p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                                <a href={{ path('cotizaciones_homepage', {'status':'Enviado'}) }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done"
+                                             data-delay="1400"
+                                             data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <em class="fa fa-check-square-o fa-3x"></em>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}{{ totalCotEnviadas|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p><span class="label label-sent">Enviadas</span></p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="row">
+                                <a href={{ path('cotizaciones_homepage', {'status':'Rechazado'}) }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done" data-delay="1400"
+                                             data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <i class="ion ion-thumbsdown fa-3x"></i>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}{{ totalCotRechazadas|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p><span class="label label-overdue">Rechazadas</span></p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                                <a href={{ path('cotizaciones_homepage', {'status':'Aprobado'}) }}>
+                                    <div class="col-md-6">
+                                        <!-- START widget-->
+                                        <div class="panel widget anim-running anim-done" data-delay="1400"
+                                             data-offset="0" data-play="fadeInLeft"
+                                             data-toggle="play-animation" style="">
+                                            <div class="panel-body">
+                                                <div class="text-right text-muted">
+                                                    <i class="ion ion-thumbsup fa-3x"></i>
+                                                </div>
+                                                <h3 class="mt0">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}{{ totalCotAprobadas|number_format(3, '.', ',') }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}</h3>
+
+                                                <p><span class="label label-paid">Aprobadas</span></p>
+                                            </div>
+                                        </div>
+                                        <!-- END widget-->
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END Secondary Widgets-->
+            </div>
+            <!-- START table-->
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- START panel-->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Actividad reciente de clientes
+                            <a class="pull-right" title="" data-toggle="tooltip" data-perform="panel-dismiss"
+                               href="javascript:void(0);" data-original-title="Cerrar Panel">
+                                <em class="fa fa-times"></em>
+                            </a>
+                            <a class="pull-right" title="" data-toggle="tooltip" data-perform="panel-collapse"
+                               href="javascript:void(0);" data-original-title="Colapsar Panel">
+                                <em class="fa fa-minus"></em>
+                            </a>
+                        </div>
+                        <!-- START table-responsive-->
+                        <div class="panel-wrapper collapse in" style="">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Actividad</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% if lastCotizacion[0] is defined and lastCotizacion[0].id != 0 %}
+                                        <tr>
+                                            <td>Cotizaci&oacute;n <a
+                                                        href={{ path('cotizaciones_detail', {'id':lastCotizacion[0].id}) }}>{{ lastCotizacion[0].codigo }}</a>
+                                                a cliente <a
+                                                        href={{ path('clientes_details', {'id':lastCotizacion[0].cliente.id}) }}>{{ lastCotizacion[0].cliente }}</a>.
+                                            </td>
+                                            <td>
+                                                {{ lastCotizacion[0].fecha|date('m/d/Y') }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                    {% if lastFactura is defined and lastFactura[0].id != 0 %}
+                                        <tr>
+                                            <td>Factura <a
+                                                        href={{ path('facturas_detail', {'id':lastFactura[0].id}) }}>{{ lastFactura[0].codigo }}</a>
+                                                a cliente <a
+                                                        href={{ path('clientes_details', {'id':lastFactura[0].cliente.id}) }}>{{ lastFactura[0].cliente }}</a>.
+                                            </td>
+                                            <td>
+                                                {{ lastFactura[0].fecha|date('m/d/Y') }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                    {% if lastPago is defined and lastPago[0].id != 0 %}
+                                        <tr>
+                                            <td>Pago en Factura <a
+                                                        href={{ path('facturas_detail', {'id':lastPago[0].factura.id}) }}>{{ lastPago[0].factura }}</a>
+                                                de cliente <a
+                                                        href={{ path('clientes_details', {'id':lastPago[0].factura.cliente.id}) }}>{{ lastPago[0].factura.cliente }}</a>.
+                                            </td>
+                                            <td>
+                                                {{ lastPago[0].fecha|date('m/d/Y') }}
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- END table-responsive-->
+
+                    </div>
+                    <!-- END panel-->
+                </div>
+            </div>
+            <!-- END table-->
+        </div>
+    </section>
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/animo/animo.min.js') }}"></script>
+    <script src="{{ asset('vendor/sparklines/jquery.sparkline.min.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/lib/codemirror.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/addon/mode/overlay.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/mode/markdown/markdown.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/mode/xml/xml.js') }}"></script>
+    <script src="{{ asset('vendor/codemirror/mode/gfm/gfm.js') }}"></script>
+    <script src="{{ asset('vendor/marked/marked.js') }}"></script>
+    <script src="{{ asset('vendor/moment/min/moment.min.js') }}"></script>
+    <script src="{{ asset('vendor/moment/lang/es.js') }}"></script>
+    <script src="{{ asset('vendor/datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
+    <script src="{{ asset('vendor/tagsinput/bootstrap-tagsinput.min.js') }}"></script>
+    <script src="{{ asset('vendor/inputmask/jquery.inputmask.bundle.min.js') }}"></script>
+    <script src="{{ asset('js/generalMethods.js') }}"></script>
+{% endblock %}

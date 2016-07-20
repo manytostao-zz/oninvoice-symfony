@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="ie ie6 lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>
+<html class="ie ie7 lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>
+<html class="ie ie8 lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9]>
+<html class="ie ie9" lang="en"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="en" class="no-ie">
+<!--<![endif]-->
+
+<head>
+    <!-- Meta-->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="author" content="">
+    <title>Kepnix Capital E.I.R.L</title>
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script><![endif]-->
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href={{ asset('app/css/bootstrap.css') }}>
+    <!-- Vendor CSS-->
+    <link rel="stylesheet" href={{ asset('vendor/fontawesome/css/font-awesome.min.css') }}>
+    <link rel="stylesheet" href={{ asset('vendor/animo/animate+animo.css') }}>
+    <link rel="stylesheet" href={{ asset('vendor/csspinner/csspinner.min.css') }}>
+    <link href={{ asset('vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css') }} rel="stylesheet">
+    <link href={{ asset('vendor/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }} rel="stylesheet">
+    <!-- START Page Custom CSS-->
+    {% block page_level_css %}
+    {% endblock %}
+    <!-- END Page Custom CSS-->
+    <!-- App CSS-->
+    <link rel="stylesheet" href={{ asset('app/css/app.css') }}>
+    <!-- Modernizr JS Script-->
+    <script src={{ asset('vendor/modernizr/modernizr.js') }} type="application/javascript"></script>
+    <!-- FastClick for mobiles-->
+    <script src={{ asset('vendor/fastclick/fastclick.js') }} type="application/javascript"></script>
+    <link rel="stylesheet" href={{ asset('css/fusionclone.css') }}>
+    <link rel="stylesheet" href={{ asset('css/ionicons.css') }}>
+</head>
+
+<body>
+<!-- START Main wrapper-->
+<section class="wrapper">
+    <!-- START Top Navbar-->
+    <nav role="navigation" class="navbar navbar-default navbar-top navbar-fixed-top">
+        <!-- START navbar header-->
+        <div class="navbar-header">
+            <div class="brand-logo"><img src={{ asset('img/logok2.jpg') }} alt="Image" class="media-object img-rounded">
+            </div>
+        </div>
+        <!-- END navbar header-->
+        <!-- START Nav wrapper-->
+        <div class="nav-wrapper">
+            <!-- START Left navbar-->
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="#" data-toggle="aside">
+                        <em class="fa fa-align-left"></em>
+                    </a>
+                </li>
+            </ul>
+            <!-- END Left navbar-->
+            <!-- START Right Navbar-->
+            <ul class="nav navbar-nav navbar-right">
+                <!-- START User menu-->
+                <li class="dropdown">
+                    <a href="{{ path('usuarios_logout') }}">
+                        <em class="fa fa-power-off"></em>
+                    </a>
+                </li>
+                <!-- END User menu-->
+                {% if is_granted('ROLE_USUARIO') %}
+                    <!-- START Contacts button-->
+                    <li>
+                        <a href="#" data-toggle="offsidebar">
+                            <em class="fa fa-align-right"></em>
+                        </a>
+                    </li>
+                    <!-- END Contacts menu-->
+                {% endif %}
+            </ul>
+            <!-- END Right Navbar-->
+        </div>
+        <!-- END Nav wrapper-->
+    </nav>
+    <!-- END Top Navbar-->
+    <!-- START aside-->
+    <aside class="aside">
+        <!-- START Sidebar (left)-->
+        <nav class="sidebar">
+            <ul class="nav">
+                <!-- START Menu-->
+                <li {% if active is defined and active['sup'] == 'Inicio' %}class="active" {% endif %}>
+                    <a href="#" onclick="document.location = '{{ path('otros_homepage') }}'" title="Inicio"
+                       data-toggle="collapse-next" class="has-submenu">
+                        <em class="fa fa-home"></em>
+                        <span class="item-text">Inicio</span>
+                    </a>
+                </li>
+                {% if is_granted('ROLE_USUARIO') %}
+                    <li {% if active is defined and active['sup'] == 'Clientes' %}class="active" {% endif %}>
+                        <a href="#" title="Clientes" data-toggle="collapse-next" class="has-submenu">
+                            <em class="fa fa-users"></em>
+                            <span class="item-text">Clientes</span>
+                        </a>
+                        <!-- START SubMenu item-->
+                        <ul class="nav collapse {% if active is defined and active['sup'] == 'Clientes' and (active['sub'] == 'Crear' or active['sub'] == 'Ver') %} in{% endif %}">
+                            <li {% if active is defined and active['sup'] == 'Clientes' and active['sub'] == 'Crear' %}class="active" {% endif %}>
+                                <a href={{ path('clientes_create') }} title="Añadir Clientes" data-toggle=""
+                                class="no-submenu
+                                activemodal">
+                                <span class="item-text">Añadir Clientes</span>
+                                </a>
+                            </li>
+                            <li {% if active is defined and active['sup'] == 'Clientes' and active['sub'] == 'Ver' %}class="active" {% endif %}>
+
+                                <a href={{ path('clientes_homepage') }} title="Ver Clientes" data-toggle=""
+                                class="no-submenu">
+                                <span class="item-text">Ver Clientes</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- END SubMenu item-->
+                    </li>
+                {% endif %}
+                <li {% if active is defined and active['sup'] == 'Cotizaciones' %}class="active" {% endif %}>
+                    <a href="#" title="Cotizaciones" data-toggle="collapse-next" class="has-submenu">
+                        <em class="fa fa-file-text-o"></em>
+                        <span class="item-text">Cotizaciones</span>
+                    </a>
+                    <!-- START SubMenu item-->
+                    <ul class="nav collapse {% if active is defined and active['sup'] == 'Cotizaciones' and (active['sub'] == 'Crear' or active['sub'] == 'Ver') %} in{% endif %}">
+                        <li {% if active is defined and active['sup'] == 'Cotizaciones' and active['sub'] == 'Crear' %}class="active" {% endif %}>
+                            <a href={{ path('cotizaciones_create') }} title="Crear Cotizaci&oacute;n" data-toggle=""
+                            class="no-submenu">
+                            <span class="item-text">Crear Cotizaci&oacute;n</span>
+                            </a>
+                        </li>
+                        <li {% if active is defined and active['sup'] == 'Cotizaciones' and active['sub'] == 'Ver' %}class="active" {% endif %}>
+                            <a href={{ path('cotizaciones_homepage') }} title="Ver Cotizaciones" data-toggle=""
+                            class="no-submenu">
+                            <span class="item-text">Ver Cotizaciones</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- END SubMenu item-->
+                </li>
+                <li {% if active is defined and active['sup'] == 'Facturas' %}class="active" {% endif %}>
+                    <a href="#" title="Facturas" data-toggle="collapse-next" class="has-submenu">
+                        <em class="fa fa-file-text"></em>
+                        <span class="item-text">Facturas</span>
+                    </a>
+                    <!-- START SubMenu item-->
+                    <ul class="nav collapse {% if active is defined and active['sup'] == 'Facturas' and (active['sub'] == 'Crear' or active['sub'] == 'Ver') %} in{% endif %}">
+                        {% if is_granted('ROLE_USUARIO') %}
+                            <li {% if active is defined and active['sup'] == 'Facturas' and active['sub'] == 'Crear' %}class="active" {% endif %}>
+                                <a href={{ path('facturas_create') }} title="Crear Factura" data-toggle=""
+                                class="no-submenu">
+                                <span class="item-text">Crear Factura</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                        <li {% if active is defined and active['sup'] == 'Facturas' and active['sub'] == 'Ver' %}class="active" {% endif %}>
+                            <a href={{ path('facturas_homepage') }} title="Ver Facturas" data-toggle=""
+                            class="no-submenu">
+                            <span class="item-text">Ver Facturas</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- END SubMenu item-->
+                </li>
+                <li {% if active is defined and active['sup'] == 'Pagos' %} class="active" {% endif %}>
+                    <a href="#" title="Pagos" data-toggle="collapse-next" class="has-submenu">
+                        <em class="fa fa-credit-card"></em>
+                        <span class="item-text">Pagos</span>
+                    </a>
+                    <!-- START SubMenu item-->
+                    <ul class="nav collapse {% if active is defined and active['sup'] == 'Pagos' and (active['sub'] == 'Crear' or active['sub'] == 'Ver') %} in{% endif %}">
+                        <li {% if active is defined and active['sup'] == 'Pagos' and active['sub'] == 'Ver' %}class="active" {% endif %}>
+                            <a href={{ path('pagos_homepage') }} title="Ver Pagos" data-toggle="" class="no-submenu">
+                            <span class="item-text">Ver Pagos</span>
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- END SubMenu item-->
+                </li>
+                {% if is_granted('ROLE_USUARIO') %}
+                    <li {% if active is defined and active['sup'] == 'Informes' %} class="active" {% endif %}>
+                        <a href="#" title="Informes" data-toggle="collapse-next" class="has-submenu">
+                            <em class="fa fa-bar-chart-o"></em>
+                            <span class="item-text">Informes</span>
+                        </a>
+                        <!-- START SubMenu item-->
+                        <ul class="nav collapse {% if active is defined and active['sup'] == 'Informes' and
+                        (active['sub'] == 'prodOfer' or active['sub'] == 'pagosReco' or active['sub'] == 'ingClie' or active['sub'] == 'resImps') %} in{% endif %}">
+                            <li {% if active is defined and active['sup'] == 'Informes' and active['sub'] == 'prodOfer' %}class="active" {% endif %}>
+                                <a href={{ path('prodOfer') }} title="Producto Ofertas" data-toggle=""
+                                class="no-submenu">
+                                <span class="item-text">Producto Ofertas</span>
+                                </a>
+                            </li>
+                            <li {% if active is defined and active['sup'] == 'Informes' and active['sub'] == 'pagosReco' %}class="active" {% endif %}>
+                                <a href={{ path('pagosReco') }} title="Pagos Recolectados" data-toggle=""
+                                class="no-submenu">
+                                <span class="item-text">Pagos Recolectados</span>
+                                </a>
+                            </li>
+                            <li {% if active is defined and active['sup'] == 'Informes' and active['sub'] == 'ingClie' %}class="active" {% endif %}>
+                                <a href={{ path('ingClie') }} title="Ingresos por Cliente" data-toggle=""
+                                class="no-submenu">
+                                <span class="item-text">Ingresos por Cliente</span>
+                                </a>
+                            </li>
+                            <li {% if active is defined and active['sup'] == 'Informes' and active['sub'] == 'resImps' %}class="active" {% endif %}>
+                                <a href={{ path('resImps') }} title="Resumen de Impuestos" data-toggle=""
+                                class="no-submenu">
+                                <span class="item-text">Resumen de Impuestos</span>
+                                </a>
+                            </li>
+                        </ul>
+                        <!-- END SubMenu item-->
+                    </li>
+                    <!-- END Menu-->
+                {% endif %}
+            </ul>
+        </nav>
+        <!-- END Sidebar (left)-->
+    </aside>
+    <!-- End aside-->
+
+    {% if is_granted('ROLE_USUARIO') %}
+        <!-- START aside-->
+        <aside class="offsidebar" style="background-color: #ffffff;">
+            <!-- START Off Sidebar (right)-->
+            <nav>
+                <ul class="nav">
+                    <!-- START user info-->
+                    <li>
+                        <div class="item" style="background-color: #212429; max-height: 120px">
+                            <div class="p-lg">
+                                <div class="text-center">
+                                    <p>
+                                        <em class="fa fa-cog fa-5x text-white"></em>
+                                    </p>
+
+                                    <p class="text-white">
+                                        <strong>Configuraci&oacute;n</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <!-- END user info-->
+                    <li>
+                        <!-- START User status-->
+                        <a href={{ path('nomencladores_listMone') }} class="list-group-item">
+                            <div class="media">
+                                <div class="pull-left">
+                                    <em class="fa fa-dollar fa-2x text-success"></em>
+                                </div>
+                                <div class="media-body clearfix">
+                                    <div class="media-heading">Monedas</div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- END User status-->
+                        <!-- START User status-->
+                        <a href={{ path('nomencladores_listGrupo') }} class="list-group-item">
+                            <div class="media">
+                                <div class="pull-left">
+                                    <em class="fa fa-file-archive-o fa-2x"></em>
+                                </div>
+                                <div class="media-body clearfix">
+                                    <div class="media-heading">Grupos</div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- END User status-->
+                        <!-- START User status-->
+                        <a href={{ path('nomencladores_listProd') }} class="list-group-item">
+                            <div class="media">
+                                <div class="pull-left">
+                                    <em class="fa fa-star fa-2x"></em>
+                                </div>
+                                <div class="media-body clearfix">
+                                    <div class="media-heading">Productos</div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- END User status-->
+                        <!-- START User status-->
+                        <a href={{ path('nomencladores_listPagos') }} class="list-group-item">
+                            <div class="media">
+                                <div class="pull-left">
+                                    <em class="fa fa-credit-card fa-2x"></em>
+                                </div>
+                                <div class="media-body clearfix">
+                                    <div class="media-heading">M&eacute;todos de Pago</div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- END User status-->
+                        <!-- START User status-->
+                        <a href={{ path('nomencladores_listImp') }} class="list-group-item">
+                            <div class="media">
+                                <div class="pull-left">
+                                    <em class="fa fa-bank fa-2x"></em>
+                                </div>
+                                <div class="media-body clearfix">
+                                    <div class="media-heading">Impuestos</div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- END User status-->
+                        <!-- START User status-->
+                        <a href={{ path('usuarios_list') }} class="list-group-item">
+                            <div class="media">
+                                <div class="pull-left">
+                                    <em class="fa fa-user fa-2x"></em>
+                                </div>
+                                <div class="media-body clearfix">
+                                    <div class="media-heading">Cuentas de usuario</div>
+                                </div>
+                            </div>
+                        </a>
+                        <!-- END User status-->
+                    </li>
+                </ul>
+            </nav>
+            <!-- END Off Sidebar (right)-->
+        </aside>
+        <!-- END aside-->
+    {% endif %}
+    <!-- START Main section-->
+    <section>
+        {% block header %} {% endblock %}
+        <!-- START Page content-->
+        {% block body %} {% endblock %}
+
+        <!-- END Page content-->
+    </section>
+    <!-- END Main section-->
+</section>
+<!-- END Main wrapper-->
+
+{% block modal %}
+{% endblock %}
+
+<!-- START Scripts-->
+<!-- Main vendor Scripts-->
+<script src="{{ asset('vendor/jquery/jquery-1.11.3.min.js') }}"></script>
+<script src="{{ asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+<!-- Plugins-->
+<script src="{{ asset('vendor/slider/js/bootstrap-slider.js') }}"></script>
+<script src="{{ asset('vendor/filestyle/bootstrap-filestyle.min.js') }}"></script>
+<script src="{{ asset('vendor/chosen/chosen.jquery.min.js') }}"></script>
+<script src="{{ asset('vendor/slimscroll/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ asset('vendor/moment/moment-with-locales.js') }}"></script>
+<script src="{{ asset('vendor/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
+<script src="{{ asset('app/js/app.js') }}"></script>
+{% block page_level_plugins %}
+{% endblock %}
+<!-- Page scripts-->
+{% block page_level_scripts %}
+{% endblock %}
+<!-- App Main-->
+<!-- END Scripts-->
+</body>
+
+</html>

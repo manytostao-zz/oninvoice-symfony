@@ -1,0 +1,7 @@
+parameters:
+#    cotizaciones.example.class: FusionClone\CotizacionesBundle\Example
+
+services:
+#    cotizaciones.example:
+#        class: %cotizaciones.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

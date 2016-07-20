@@ -1,0 +1,205 @@
+.wrapper .header-content {
+    background: none repeat scroll 0 0 #FBFBFB;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+    padding: 15px 15px 10px 20px;
+    position: relative;
+    color: #333;
+}
+
+.wrapper .header-content .row {
+    margin: 0px;
+}
+
+.wrapper .header-content h1 {
+    font-size: 24px;
+    font-weight: normal;
+    margin-top: -2.1px;
+}
+
+.nav.nav-pills > li.active > a {
+    font-weight: 600;
+}
+
+.nav.nav-pills > li.active > a, .nav.nav-pills > li.active > a:hover {
+    background-color: #F6F6F6;
+    border-top-color: #3C8DBC;
+    color: #444444;
+}
+
+.nav.nav-pills > li > a {
+    border-radius: 0;
+    border-top: 3px solid rgba(0, 0, 0, 0);
+    color: #444444;
+}
+
+.table-striped > tbody > tr.odd {
+    background-color: #fafbfc;
+}
+
+.table-striped > tbody > tr.even {
+    background-color: #fff;
+}
+
+.alert > p, .alert > ul {
+    list-style: none;
+}
+
+.alert-warning {
+    color: #8a6d3b;
+}
+
+.navbar-brand {
+    padding: 0px 15px;
+}
+
+.navbar-top .navbar-header {
+    background-color: #fff;
+    border-style: solid;
+    border-width: 0px 1px 0px 0px;
+}
+
+.navbar-top .navbar-header .brand-logo,
+.navbar-top .navbar-header .brand-logo img {
+    width: 70%;
+    height: 60px;
+    text-align: center;
+}
+
+.col-xs-12.fact {
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.col-xs-12.fact .col-sm-4,
+.col-xs-12.fact .col-sm-8,
+.col-xs-12.fact .col-sm-12 {
+    padding: 0px;
+}
+
+.offsidebar {
+    width: 220px;
+}
+
+.label {
+    color: #ffffff;
+}
+
+.label-draft {
+    background-color: #999999;
+}
+
+.label-sent {
+    background-color: #3A87AD;
+}
+
+.label-paid {
+    background-color: #468847;
+}
+
+.label-approved {
+    background-color: #468847;
+}
+
+.label-rejected, .label-overdue {
+    background-color: #B94A48;
+}
+
+.label-canceled {
+    background-color: #333333;
+}
+
+.facRec.modal-dialog {
+    width: 350px;
+}
+
+.facRec.modal-dialog label {
+    margin-right: 10px;
+}
+
+.rec {
+    float: left;
+    width: 30%;
+    border: solid thin;
+    min-height: 1px;
+    margin-top: 15px;
+    margin-left: 15px;
+    padding-left: 5px;
+    padding-right: 5px;
+    position: relative;
+}
+
+.rec label {
+    margin-right: 10px;
+}
+
+.table-scrollable {
+    border: 1px solid #dddddd;
+    margin: 10px 0 !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+}
+
+.table-scrollable > .table-bordered {
+    border: 0 none;
+}
+
+.table-scrollable > .table {
+    background-color: #fff;
+    margin: 0 !important;
+    width: 100% !important;
+}
+
+.main-content{
+    padding: 15px;
+}
+
+@media only screen and (max-width: 767px) {
+    .col-xs-12.fact {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
+    .offsidebar-open .aside {
+        display: none;
+    }
+
+    .offsidebar-open .wrapper {
+        min-height: 540px;
+    }
+
+    .navbar-top .navbar-header .brand-logo, .navbar-top .navbar-header .brand-logo img {
+        width: 140px;
+    }
+
+    .offsidebar-open table {
+        display: none;
+    }
+
+    .aside-toggled .main-content .row .row {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .facRec.modal-dialog {
+        width: 300px;
+    }
+
+    .rec {
+        float: left;
+        width: 100%;
+        border: solid thin;
+        padding-left: 10px;
+        margin-right: 10px;
+    }
+}
+
+.input-inline {
+    display: inline-block;
+    vertical-align: middle;
+    width: auto;
+}
+
+.input-xsmall {
+    width: 80px !important;
+}

@@ -1,0 +1,104 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/cotizaciones/css/cotizacion.css') }}">
+{% endblock %}
+{% block header %}
+    {{ form_start(formCot) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Formulario de Cotizaci&oacute;n
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formCot.Guardar) }}</div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+    {% if (form_errors(formCot)) %}
+        <div class="alert alert-danger">{{ form_errors(formCot) }}</div>
+    {% endif %}
+    {% if (form_errors(formCot.fecha)) %}
+        <div class="alert alert-danger">{{ form_errors(formCot.fecha) }}</div>
+    {% endif %}
+    <div class="row">
+        <div class="col-xs-12 fact">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="box-header">
+                        <h3 class="box-title">Datos de Cotizaci&oacute;n</h3>
+                    </div>
+                    <br/>
+
+                    <div class="box-body">
+                        <div class="form-group" style="padding-bottom: 40px;">
+                            <label style="text-align: right" class="col-sm-3 control-label">Cliente</label>
+
+                            <div class="col-sm-9">{{ form_widget(formCot.cliente) }}</div>
+                        </div>
+                        <div class="form-group" style="padding-bottom: 40px;">
+                            <label style="text-align: right" class="col-sm-3 control-label">Grupo</label>
+
+                            <div class="col-sm-9">{{ form_widget(formCot.tdocConf) }}</div>
+                        </div>
+                        <div class="form-group" style="padding-bottom: 40px;">
+                            <label style="text-align: right;" class="col-sm-3 control-label">Fecha
+                                Cotizaci&oacute;n</label>
+
+                            <div class="col-sm-5">
+                                <div class="form-group">
+                                    <div id="datetimepicker2" class="input-group date">
+                                        {{ form_widget(formCot.fecha, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }, 'class': 'form-control'}) }}
+                                        <span class="input-group-addon">
+                                            <span class="fa fa-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>{{ form_end(formCot) }}
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                moment.locale('es');
+                var selects = document.getElementsByTagName('select');
+                for (var i = 0; i < selects.length; i++) {
+                    $('#' + selects[i].id).select2({language: "es"});
+                }
+            });
+
+            $('#datetimepicker2').datetimepicker({
+                format: 'MM/DD/YYYY',
+                locale: 'es',
+                icons: {
+                    time: "fa fa-clock-o",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-calendar-o',
+                    clear: 'fa fa-trash-o'
+                }
+            });
+        });
+    </script>
+{% endblock %}

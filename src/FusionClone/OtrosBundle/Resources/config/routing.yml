@@ -1,0 +1,32 @@
+otros_homepage:
+    pattern:  /
+    defaults: { _controller: OtrosBundle:Default:index }
+
+prodOfer:
+    pattern:  /producto-oferta/
+    defaults: { _controller: OtrosBundle:Default:prodOfer }
+
+pagosReco:
+    pattern:  /pagos-recolectados/
+    defaults: { _controller: OtrosBundle:Default:pagosReco }
+
+ingClie:
+    pattern:  /ingresos-cliente/
+    defaults: { _controller: OtrosBundle:Default:ingClie }
+
+resImps:
+    pattern:  /resumen-impuestos/
+    defaults: { _controller: OtrosBundle:Default:resImps }
+
+#AJAXSOURCE
+appParam_monedaBase:
+    pattern: /moneda-base/
+    defaults: { _controller: OtrosBundle:Default:monedaBase }
+    options:
+        expose: true
+
+prodOfer_ajaxList:
+    pattern: /prodOfer/
+    defaults: { _controller: OtrosBundle:Default:prodOferAjax }
+    options:
+        expose: true

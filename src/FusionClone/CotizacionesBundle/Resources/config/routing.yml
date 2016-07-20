@@ -1,0 +1,59 @@
+cotizaciones_homepage:
+    pattern:  /cotizaciones/
+    defaults: { _controller: CotizacionesBundle:Default:index }
+
+cotizaciones_create:
+    pattern:  /cotizaciones/crear/
+    defaults: { _controller: CotizacionesBundle:Default:create }
+
+cotizaciones_detail:
+    pattern:  /cotizaciones/{id}/detalles/
+    defaults: { _controller: CotizacionesBundle:Default:details }
+    options:
+      expose: true
+
+cotizaciones_cancel:
+    pattern:  /cotizaciones/{id}/cancelar/
+    defaults: { _controller: CotizacionesBundle:Default:cancel }
+
+cotizaciones_approve:
+    pattern:  /cotizaciones/{id}/aprobar/
+    defaults: { _controller: CotizacionesBundle:Default:approve }
+
+cotizaciones_reject:
+    pattern:  /cotizaciones/{id}/rechazar/
+    defaults: { _controller: CotizacionesBundle:Default:reject }
+
+cotizaciones_save:
+    pattern:  /cotizaciones/salvar/
+    defaults: { _controller: CotizacionesBundle:Default:save }
+
+cotizaciones_generate:
+    pattern:  /cotizaciones/generar/
+    defaults: { _controller: CotizacionesBundle:Default:generate }
+
+cotizaciones_delete:
+    pattern:  /cotizaciones/{id}/borrar/
+    defaults: { _controller: CotizacionesBundle:Default:delete }
+    options:
+      expose: true
+
+cotizaciones_preview:
+    pattern:  /cotizaciones/{id}/vista-previa/{preview}
+    defaults: { _controller: CotizacionesBundle:Default:preview }
+    options:
+      expose: true
+
+cotizaciones_send_mail:
+    pattern:  /cotizaciones/{id}/send_mail/
+    defaults: { _controller: CotizacionesBundle:Default:sendMail }
+
+cotizaciones_pdf:
+    pattern:  /cotizaciones/{id}/pdf/
+    defaults: { _controller: CotizacionesBundle:Default:pdf }
+
+cotizaciones_listar:
+    pattern:  /cotizaciones/listar/
+    defaults: { _controller: CotizacionesBundle:Default:list }
+    options:
+      expose: true

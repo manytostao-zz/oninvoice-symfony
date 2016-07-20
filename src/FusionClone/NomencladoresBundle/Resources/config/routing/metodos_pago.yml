@@ -1,0 +1,31 @@
+#Métodos de Pago
+nomencladores_listPagos:
+    pattern:  /
+    defaults: { _controller: NomencladoresBundle:MetodoPago:listPagos }
+
+nomencladores_createPagos:
+    pattern:  /crear/
+    defaults: {_controller: NomencladoresBundle:MetodoPago:createPagos }
+
+nomencladores_editPagos:
+    pattern:  /{id}/editar/
+    defaults: {_controller: NomencladoresBundle:MetodoPago:editPagos }
+    options:
+        expose: true
+
+nomencladores_deletePagos:
+    pattern:  /{id}/borrar/
+    defaults: {_controller: NomencladoresBundle:MetodoPago:deletePagos }
+    options:
+        expose: true
+
+nomencladores_savePagos:
+    pattern:  /salvar/
+    defaults: {_controller: NomencladoresBundle:MetodoPago:savePagos }
+
+#AJAXSOURCE
+nomencladores_listMetPagAjax:
+    pattern:  /lista_ajax/
+    defaults: {_controller: NomencladoresBundle:MetodoPago:list }
+    options:
+        expose: true

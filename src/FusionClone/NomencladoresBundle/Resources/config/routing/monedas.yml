@@ -1,0 +1,31 @@
+#Monedas
+nomencladores_listMone:
+    pattern:  /
+    defaults: { _controller: NomencladoresBundle:Moneda:listMone }
+
+nomencladores_createMone:
+    pattern:  /crear/
+    defaults: {_controller: NomencladoresBundle:Moneda:createMone }
+
+nomencladores_editMone:
+    pattern:  /{id}/editar/
+    defaults: {_controller: NomencladoresBundle:Moneda:editMone }
+    options:
+        expose: true
+
+nomencladores_deleteMone:
+    pattern:  /{id}/borrar/
+    defaults: {_controller: NomencladoresBundle:Moneda:deleteMone }
+    options:
+        expose: true
+
+nomencladores_saveMone:
+    pattern:  /salvar/
+    defaults: {_controller: NomencladoresBundle:Moneda:saveMone }
+
+#AJAXSOURCE
+nomencladores_listMoneAjax:
+    pattern:  /lista_ajax/
+    defaults: {_controller: NomencladoresBundle:Moneda:list }
+    options:
+        expose: true

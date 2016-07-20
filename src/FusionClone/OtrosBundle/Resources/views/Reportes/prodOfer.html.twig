@@ -1,0 +1,206 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <!-- Data Table styles-->
+    <link rel="stylesheet"
+          href="{{ asset('vendor/datatable/extensions/datatable-bootstrap/css/dataTables.bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/datatable/extensions/ColVis/css/dataTables.colVis.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/otros/css/otros.css') }}">
+{% endblock %}
+{% block header %}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">Ofertas de Productos por Clientes
+        </h1>
+        {{ form_start(dateForm) }}
+        <div class="pull-right">
+            {{ form_widget(dateForm.Ejecutar) }}
+        </div>
+        <div class="row">
+            <div class="col-md-10 pull-right">
+                <br/>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="col-sm-2"><label>Desde:</label></div>
+                            <div class="col-sm-7">
+                                <div class="datetimepicker input-group date mb-lg"
+                                     data-pick-time="false">
+                                    {{ form_widget(dateForm.desde, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}) }}
+                                    <span class="input-group-addon">
+                                                                <span class="fa-calendar fa">
+                                                                </span>
+                                                            </span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <div class="col-sm-2"><label>Hasta:</label></div>
+                            <div class="col-sm-7">
+                                <div class="datetimepicker input-group date mb-lg"
+                                     data-pick-time="false">
+                                    {{ form_widget(dateForm.hasta, {'attr':{'data-toggle':'masked', 'data-inputmask': "'mask': '99/99/9999'" }}) }}
+                                    <span class="input-group-addon">
+                                                                <span class="fa-calendar fa">
+                                                                </span>
+                                                            </span>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if (form_errors(dateForm.desde)) %}
+            <div class="alert alert-danger">{{ form_errors(dateForm.desde) }}</div>
+        {% endif %}
+        {% if (form_errors(dateForm.hasta)) %}
+            <div class="alert alert-danger">{{ form_errors(dateForm.hasta) }}</div>
+        {% endif %}
+        {{ form_end(dateForm) }}
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Listado
+                    </div>
+                    <div class="panel-body">
+                        <table role="grid" id="prodOfersTable"
+                               class="table table-striped table-hover dataTable no-footer">
+                            <thead>
+                            <tr role="row">
+                                <th>Producto
+                                </th>
+                                <th>Cliente
+                                </th>
+                                <th>Factura
+                                </th>
+                                <th>Fecha
+                                </th>
+                                <th style="text-align: center">Precio
+                                </th>
+                                <th style="text-align: center">Cantidad
+                                </th>
+                                <th style="text-align: center">Total
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+    <!-- Data Table Scripts-->
+    <script src="{{ asset('vendor/datatable/media/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('vendor/datatable/extensions/datatable-bootstrap/js/dataTables.bootstrap.js') }}"></script>
+    <script src="{{ asset('vendor/datatable/extensions/datatable-bootstrap/js/dataTables.bootstrapPagination.js') }}"></script>
+    <script src="{{ asset('vendor/datatable/extensions/ColVis/js/dataTables.colVis.min.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $('.datetimepicker').datetimepicker({
+                    format: 'MM/DD/YYYY',
+                    locale: 'es',
+                    icons: {
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-arrow-up",
+                        down: "fa fa-arrow-down",
+                        previous: 'fa fa-chevron-left',
+                        next: 'fa fa-chevron-right',
+                        today: 'fa fa-calendar-o',
+                        clear: 'fa fa-trash-o'
+                    }
+                });
+            });
+
+            var oTable;
+            oTable = $('#prodOfersTable').dataTable(
+                    {
+                        "language": {
+                            "lengthMenu": " _MENU_ registros",
+                            "sSearch": "Buscar",
+                            "sZeroRecords": "No se encontraron registros",
+                            "sEmptyTable": "No hay registros disponibles: cambie los criterios de filtrado",
+                            "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                            "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+                            "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                            "oPaginate": {
+                                sFirst: "<i class='fa fa-backward' title='Primero'></i>",
+                                sLast: "<i class='fa fa-forward' title='Último'></i>",
+                                sNext: "<i class='fa fa-caret-right' title='Siguiente'></i>",
+                                sPrevious: "<i class='fa fa-caret-left' title='Anterior'></i>"
+                            },
+                            "sPaginationType": "full_numbers",
+                            "sProcessing": "Procesando..."
+                        },
+                        "drawCallback": function ( settings ) {
+                            var api = this.api();
+                            var rows = api.rows( {page:'current'} ).nodes();
+                            var last=null;
+                            api.column(0, {page:'current'} ).data().each( function ( group, i ) {
+                                if ( last !== group ) {
+                                    $(rows).eq( i ).before(
+                                            '<tr class="group"><td colspan="6">'+group+'</td></tr>'
+                                    );
+                                    last = group;
+                                }
+                            } );
+                        },
+                        "aLengthMenu": [5, 10, 15],
+                        "sPaginationType": "full_numbers",
+                        "pageLength": 10,
+                        "bLengthChange": true,
+                        "processing": true,
+                        "bJQueryUI": true,
+                        "bServerSide": true,
+                        "ajax": {
+                            "url": Routing.generate('prodOfer_ajaxList'),
+                            "type": "POST"
+                        },
+                        "dom": "<'row'<'col-md-6 col-sm-12'l><'col-md-6 col-sm-12'f>r><'table-scrollable't><'row'<'col-md-5 col-sm-12'i><'col-md-7 col-sm-12'p>>", // horizontal scrollable datatable
+                        "columnDefs": [{
+                            "visible": false,
+                            "targets": [0]
+                        },{
+                            "orderable": false,
+                            "targets": [6]
+                        },{
+                            "class": "column-right",
+                            "targets": [4, 5, 6]
+                        }]
+                    }
+            );
+            $('#prodOfersTable').on( 'click', 'tr.group', function () {
+                oTable.fnSort([ 0, 'asc' ]);
+            } );
+            $('div .dataTables_length select').select2({language:"es", width: 90});
+            $('div.dataTables_filter input').addClass('form-control input-inline input-sm');
+        })
+    </script>
+{% endblock %}

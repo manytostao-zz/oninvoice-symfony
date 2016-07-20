@@ -1,0 +1,48 @@
+{% extends '::frontend.html.twig' %}
+{% block header %}
+    {{ form_start(formImp) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Formulario de Impuesto
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formImp.Guardar) }}</div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+    {% if (form_errors(formImp)) %}
+        <div class="alert alert-danger">{{ form_errors(formImp) }}</div>
+    {% endif %}
+
+    {% if (form_errors(formImp.porcentaje)) %}
+        <div class="alert alert-danger">{{ form_errors(formImp.porcentaje) }}</div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <br/>
+
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            {{ form_widget(formImp.nombre) }}
+                            <p class="help-block">Nombre de impuesto, e.j. "Arancel por transportaci&oacute;n".</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Porcentaje:</label>
+                            {{ form_widget(formImp.porcentaje) }}
+                            <p class="help-block">Porciento de impuesto a aplicar, e.j. "5".</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>{{ form_end(formImp) }}
+{% endblock %}

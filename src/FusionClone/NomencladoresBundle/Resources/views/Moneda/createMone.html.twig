@@ -1,0 +1,108 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/nomencladores/css/moneda.css') }}">
+{% endblock %}
+{% block header %}
+    {{ form_start(formMoneda) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Formulario de Moneda
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formMoneda.Guardar) }}</div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+        {% if (form_errors(formMoneda)) %}
+            <div class="alert alert-danger">{{ form_errors(formMoneda) }}</div>
+        {% endif %}
+        {% if (form_errors(formMoneda.tasa)) %}
+            <div class="alert alert-danger">{{ form_errors(formMoneda.tasa) }}</div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <br/>
+
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                {{ form_widget(formMoneda.descripcion) }}
+                                <p class="help-block">Nombre moneda, e.j. "D&oacute;lar Americano".</p>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>C&oacute;digo:</label>
+                                        {{ form_widget(formMoneda.codigo) }}
+                                        <p class="help-block">Código moneda, e.j. "USD".</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>S&iacute;mbolo:</label>
+                                        {{ form_widget(formMoneda.simbolo) }}
+                                        <p class="help-block">Símbolo moneda, e.j. "$".</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Ubicaci&oacute;n s&iacute;mbolo:</label>
+                                        {{ form_widget(formMoneda.ubicaSimbol) }}
+                                        <p class="help-block">Ubicación símbolo moneda.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Signo Decimal:</label>
+                                        {{ form_widget(formMoneda.signDecimal) }}
+                                        <p class="help-block">Signo decimal, e.j. ",".</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Separador de Millares:</label>
+                                        {{ form_widget(formMoneda.signMillares) }}
+                                        <p class="help-block">Signo de millares, e.j. ".".</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Tasa de Cambio:</label>
+                                        {{ form_widget(formMoneda.tasa) }}
+                                        <p class="help-block">Esta tasa es con respecto a la moneda base.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {{ form_end(formMoneda) }}
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $('select').select2({"language": "es"});
+            })
+        });
+    </script>
+{% endblock %}

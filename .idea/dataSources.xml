@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" hash="1428437620">
+    <data-source source="LOCAL" name="Data Source" uuid="1b3f55d9-9046-4d87-b793-a07c2ee738b7">
+      <driver-ref>mysql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3306/fusionclone</jdbc-url>
+      <libraries>
+        <library>
+          <url>file://H:/SYMFONY2 DOCS &amp; APPS/PHPStorm/mysql-connector-java-5.1.26-bin.jar</url>
+        </library>
+      </libraries>
+    </data-source>
+  </component>
+</project>
+

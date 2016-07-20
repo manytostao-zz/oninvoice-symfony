@@ -1,0 +1,115 @@
+{% extends '::frontend.html.twig' %}
+{% block page_level_css %}
+    <link rel="stylesheet" href="{{ asset('vendor/select2/4.0.0/css/select2.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/nomencladores/css/grupo.css') }}">
+{% endblock %}
+{% block header %}
+    {{ form_start(formGrupo) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Formulario de Grupo
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formGrupo.Guardar) }}</div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+    {% if (form_errors(formGrupo)) %}
+        <div class="alert alert-danger">{{ form_errors(formGrupo) }}</div>
+    {% endif %}
+    {% if (form_errors(formGrupo.consecutivo)) %}
+        <div class="alert alert-danger">{{ form_errors(formGrupo.consecutivo) }}</div>
+    {% endif %}
+    {% if (form_errors(formGrupo.cantDigCons)) %}
+        <div class="alert alert-danger">{{ form_errors(formGrupo.cantDigCons) }}</div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <br/>
+
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            {{ form_widget(formGrupo.descripcion) }}
+                            <p class="help-block">Descripci&oacute;n de grupo, e.j. "Facturas 1".</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Prefijo:</label>
+                                    {{ form_widget(formGrupo.prefijo) }}
+                                    <p class="help-block">Prefijo de c&oacute;digo, e.j. "FAC#".</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Tpo de Documento:</label>
+                                    {{ form_widget(formGrupo.tdoc) }}
+                                    <p class="help-block">Tipo de documento que est&aacute; asociado el grupo.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Siguiente ID:</label>
+                                    {{ form_widget(formGrupo.consecutivo) }}
+                                    <p class="help-block">Pr&oacute;ximo ID a generar para el c&oacute;digo, e.j.
+                                        "0".</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Margen izquierdo:</label>
+                                    {{ form_widget(formGrupo.cantDigCons) }}
+                                    <p class="help-block">Cantidad de d&iacute;gitos entre el prefijo y el siguiente
+                                        ID.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Prefijo a&ntilde;o:</label>
+                                    {{ form_widget(formGrupo.anno) }}
+                                    <p class="help-block">Se incluye el a&ntilde;o en la generaci&oacute;n del c&oacute;digo.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Prefijo Mes:</label>
+                                    {{ form_widget(formGrupo.mes) }}
+                                    <p class="help-block">Se incluye el mes en la generaci&oacute;n del
+                                        c&oacute;digo.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>{{ form_end(formGrupo) }}
+{% endblock %}
+
+{% block page_level_plugins %}
+    <script src="{{ asset('vendor/select2/4.0.0/js/select2.js') }}"></script>
+    <script src="{{ asset('vendor/select2/4.0.0/js/i18n/es.js') }}"></script>
+{% endblock %}
+
+{% block page_level_scripts %}
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                $('select').select2({"language": "es"});
+            })
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,143 @@
+{% extends '::frontend.html.twig' %}
+{% block header %}
+    {{ form_start(formUsua) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Formulario de Usuario
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formUsua.Guardar) }}</div>
+        {% if tipoForm == 'add' or tipoForm == 'addAsocClie' %}
+            <div class="pull-right" style="margin-right: 20px;">
+                <ul class="nav nav-pills">
+                    <li {% if pill is defined and pill == 'Admin' %}class="active" {% endif %}>
+                        <a href={{ path('usuarios_create') }}>Administrador</a></li>
+                    <li {% if pill is defined and pill == 'Clie' %}class="active" {% endif %}>
+                        <a href={{ path('usuarios_create', {'addAsocClie' : true}) }}>Asociado a Cliente</a></li>
+                </ul>
+            </div>
+        {% endif %}
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+    {% if (form_errors(formUsua)) %}
+        <div class="alert alert-danger">{{ form_errors(formUsua) }}</div>
+    {% endif %}
+    {% if (form_errors(formUsua.password.first)) %}
+        <div class="alert alert-danger">{{ form_errors(formUsua.password.first) }}</div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <br/>
+
+                    <div class="box-body">
+                        {% if tipoForm =='add' or tipoForm =='edit' %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Nombre:</label>
+                                        {{ form_widget(formUsua.nombre) }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Email:</label>
+                                        {{ form_widget(formUsua.email) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            {% do formUsua.nombre.setRendered %}
+                            {% do formUsua.email.setRendered %}
+                        {% endif %}
+                        {% if tipoForm == 'add' or  tipoForm == 'reset' or tipoForm == 'addAsocClie' or tipoForm == 'editAsocClie' %}
+                            {% if tipoForm == 'addAsocClie' or tipoForm == 'editAsocClie' %}
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Cliente:</label>
+                                            {{ form_widget(formUsua.cliente, {'attr':{'class':'form-control' }})
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Contraseña:</label>
+                                        {{ form_widget(formUsua.password.first, {'attr':{'class':'form-control' }}) }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Repetir Contraseña:</label>
+                                        {{ form_widget(formUsua.password.second, {'attr':{'class':'form-control' }}) }}
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            {% do formUsua.password.first.setRendered %}
+                            {% do formUsua.password.second.setRendered %}
+                        {% endif %}
+                        {% if tipoForm == 'add' or tipoForm =='edit' %}
+                            <div class="form-group">
+                                <label>Compa&ntilde;&iacute;a:</label>
+                                {{ form_widget(formUsua.compannia) }}
+                            </div>
+                            <div class="form-group">
+                                <label>Direcci&oacute;n:</label>
+                                {{ form_widget(formUsua.direccion) }}
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Tel&eacute;fono:</label>
+                                        {{ form_widget(formUsua.telefono) }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>M&oacute;vil:</label>
+                                        {{ form_widget(formUsua.movil) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Fax:</label>
+                                        {{ form_widget(formUsua.fax) }}
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>P&aacute;gina web:</label>
+                                        {{ form_widget(formUsua.webpage) }}
+                                    </div>
+                                </div>
+                            </div>
+                            {% do formUsua.cliente.setRendered %}
+                        {% else %}
+                            {% do formUsua.compannia.setRendered %}
+                            {% do formUsua.direccion.setRendered %}
+                            {% do formUsua.telefono.setRendered %}
+                            {% do formUsua.movil.setRendered %}
+                            {% do formUsua.fax.setRendered %}
+                            {% do formUsua.webpage.setRendered %}
+                            {% do formUsua.cliente.setRendered %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>{{ form_end(formUsua) }}
+{% endblock %}

@@ -1,0 +1,238 @@
+{% extends '::frontend.html.twig' %}
+{% block header %}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">Vista previa
+        </h1>
+
+        <div class="pull-right">
+            <a class="btn btn-circle" title="Ir a Listado" href={{ path('cotizaciones_homepage') }}>
+                <em class="fa fa-list"></em></a>
+            <a class="btn btn-primary" href="{{ path('cotizaciones_pdf', {'id': cotizacion.id}) }}">
+                <i class="fa fa-file-pdf-o"></i>
+                Descargar PDF
+            </a>
+        </div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content" style="padding: 5px; display: block; box-sizing: border-box; padding: 25px;">
+        <div class="row">
+            <div class="col-xs-12">
+                <!-- START panel-->
+                <div class="panel panel-default" style="-moz-border-bottom-colors: none;
+                                                    -moz-border-left-colors: none;
+                                                    -moz-border-right-colors: none;
+                                                    -moz-border-top-colors: none;
+                                                    border-color: #EEEEEE #EEEEEE #D1D2D3;
+                                                    border-image: none;
+                                                    border-style: solid;
+                                                    border-width: 1px;
+                                                    border-radius: 4px;
+                                                    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+                                                    margin-bottom: 20px;">
+                    <div class="panel-heading" style="background-color: #FAFAFA;
+                                                    border-color: #EEEEEE;
+                                                    color: #616262;">
+                        <div class="row" style="margin-left: -15px;
+                                            margin-right: -15px;">
+                            <div class="col-sm-6" style="min-height: 1px;
+                                                    padding-left: 15px;
+                                                    padding-right: 15px;
+                                                    position: relative;
+                                                    float: left;
+                                                    width: 50%;">
+                                <h1 style="width: 270px;
+                                        margin-bottom: 10px;
+                                        margin-top: 20px;
+                                        font-size: 24px;
+                                        font-weight: bold;
+                                        line-height: 1.1;">
+                                    <label style="display: inline-block;
+                                                font-weight: bold;
+                                                margin-bottom: 5px;
+                                                max-width: 100%;">
+                                        Cotizaci&oacute;n
+                                    </label></h1>
+                                <label>N&uacute;mero: &nbsp; </label><label> {{ cotizacion.codigo }}</label><br/>
+                                <label>Fecha de creaci&oacute;n:
+                                    &nbsp;</label><label>{{ cotizacion.fecha|date('m/d/Y') }}</label><br/>
+                                <label>Fecha de vencimiento:
+                                    &nbsp;</label><label>{{ cotizacion.fechaVenc|date('m/d/Y') }}</label><br/>
+                                <label>Estado: &nbsp;</label><label>{{ cotizacion.estado }}</label><br/>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br/>
+
+                    <div class="panel-body" style="padding: 15px; clear: both; border-top: solid thin">
+                        <!-- Tab panes -->
+                        <div class="main-content" style="padding: 20px 40px;">
+                            <div id="home" class="tab-pane fade active in">
+                                {% if usuario is not null %}
+                                <div class="pull-left" style="text-align: left; float: left !important;">
+                                    <h4>Desde</h4>
+                                    <br>
+                                    <strong>{{ usuario.compannia }}</strong>
+                                    <br>
+                                    {{ usuario.nombre }}
+                                    <br>
+                                    {{ usuario.direccion }}
+                                    <br>
+                                    Tel&eacute;fono: {{ usuario.telefono }}
+                                    <br>
+                                    Contacto: {{ usuario.email }}
+                                    {% endif %}
+                                </div>
+                                <div class="pull-right" style="text-align: left; float: right !important;">
+                                    {% if cotizacion.cliente is not null %}
+                                        <h4>Para</h4>
+                                        <br>
+                                        {{ cotizacion.cliente.nombre }}
+                                        <br>
+                                        {{ cotizacion.cliente.direccion }}
+                                        <br>
+                                        Tel&eacute;fono: {{ cotizacion.cliente.telefono }}
+                                        <br>
+                                        Contacto: {{ cotizacion.cliente.email }}
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                            <!-- END panel-->
+                            <div class="clearfix" style="clear: both;"></div>
+                            <br/>
+
+                            <div class="row" style="margin-left: -15px;
+                                                margin-right: -15px;
+                                                clear: both;
+                                                font-size: 14px">
+
+                                <div class="table-responsive">
+                                    <table id="item-table" class="table table-hover" style="border-collapse: collapse;
+                                                                                border-spacing: 0;
+                                                                                background-color: rgba(0, 0, 0, 0);
+                                                                                max-width: 100%;
+                                                                                width: 100%;
+                                                                                border: 0 none;
+                                                                                margin-bottom: 0;
+                                                                                text-align: left;
+                                                                                font-size: 14px">
+                                        <thead>
+                                        <tr style="background-color: lavender; border-top: solid">
+                                            <th style="width: 15%;">Producto</th>
+                                            <th style="width: 20%;">Descripción</th>
+                                            <th style="width: 10%;">Cantidad</th>
+                                            <th style="width: 10%;">Precio</th>
+                                            <th style="width: 20%;">Tasa de Impuesto</th>
+                                            <th style="width: 10%; text-align: center">Total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for cotItem in cotizacion.cotItems %}
+                                            <tr style="background-color: #F0F0F0">
+                                                <td>
+                                                    {{ cotItem.producto }}
+                                                </td>
+                                                <td>
+                                                    {{ cotItem.descripcion }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    {{ cotItem.cantidad }}
+                                                </td>
+                                                <td style="text-align: center">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ cotItem.precio|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                </td>
+                                                <td>
+                                                    {{ cotItem.impuesto }}
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                    {{ cotItem.total|number_format(3, app.session.get('MONEDA_BASE')[0].signdecimal, app.session.get('MONEDA_BASE')[0].signmillares) }}
+                                                    {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                        {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <br/>
+
+                            <div class="row">
+                                <div class="col-md-4" style="font-size: 14px; float: right">
+                                    <div class="col-sm-12 list-group-item" style="padding-bottom: 10px">
+                                        <strong>Subtotal:</strong>
+                                        {% set subtotal = 0 %}
+                                        {% for cotItem in cotizacion.cotItems %}
+                                            {% set subtotal = subtotal + cotItem.total %}
+                                        {% endfor %}
+                                        {% set impuestos = 0 %}
+                                        {% for cotImp in cotizacion.cotImps %}
+                                            {% set impuestos = impuestos + cotImp.total %}
+                                        {% endfor %}
+
+                                        <span class="pull-right" style="float: right !important;">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+                                            {{ subtotal |number_format(3, '.', ',') }}
+                                            {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                                                {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                                            {% endif %}</span>
+                                    </div>
+                                    <div class="col-sm-12 list-group-item" style="padding-bottom: 10px">
+                                        <strong>Impuesto:</strong>
+
+            <span class="pull-right"
+                  style="float: right !important;">
+                 {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                     {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                 {% endif %}
+                {{ impuestos |number_format(3, '.', ',') }}
+                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}</span>
+
+                                    </div>
+                                    <div class="col-sm-12 list-group-item" style="padding-bottom: 10px">
+                                        <strong>Total:</strong>
+            <span class="pull-right"
+                  style="float: right !important;">
+                {% if app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+                {{ (subtotal + impuestos) |number_format(3, '.', ',') }}
+                {% if not app.session.get('MONEDA_BASE')[0].ubicasimbol %}
+                    {{ app.session.get('MONEDA_BASE')[0].simbolo }}
+                {% endif %}
+                {% if cotizacion.moneda.codigo != app.session.get('MONEDA_BASE')[0].codigo %}
+                ( {{ cotizacion.moneda.simbolo }} {{ ((subtotal + impuestos) * cotizacion.moneda.tasa) |number_format(3, cotizacion.moneda.signDecimal, cotizacion.moneda.signMillares) }}
+                )</span>
+                                        <br/>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+                                <div class="clear-fix" style="clear: both"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

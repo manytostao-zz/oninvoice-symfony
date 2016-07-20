@@ -1,0 +1,30 @@
+cotizaciones:
+    resource: "@CotizacionesBundle/Resources/config/routing.yml"
+    prefix:   /
+
+otros:
+    resource: "@OtrosBundle/Resources/config/routing.yml"
+    prefix:   /
+
+pagos:
+    resource: "@PagosBundle/Resources/config/routing.yml"
+    prefix:   /
+
+usuarios:
+    resource: "@UsuariosBundle/Resources/config/routing.yml"
+    prefix:   /
+
+facturas:
+    resource: "@FacturasBundle/Resources/config/routing.yml"
+    prefix:   /
+
+nomencladores:
+    resource: "@NomencladoresBundle/Resources/config/routing.yml"
+    prefix:   /
+
+clientes:
+    resource: "@ClientesBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"

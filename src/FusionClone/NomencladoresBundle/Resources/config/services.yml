@@ -1,0 +1,7 @@
+parameters:
+#    nomencladores.example.class: FusionClone\NomencladoresBundle\Example
+
+services:
+#    nomencladores.example:
+#        class: %nomencladores.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

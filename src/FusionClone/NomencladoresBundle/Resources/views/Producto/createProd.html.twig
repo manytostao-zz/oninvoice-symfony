@@ -1,0 +1,58 @@
+{% extends '::frontend.html.twig' %}
+{% block header %}
+    {{ form_start(formProd) }}
+    <section class="header-content">
+        <h1 class="pull-left" style="position: relative">
+            Formulario de Producto
+        </h1>
+
+        <div class="pull-right">
+            {{ form_widget(formProd.Guardar) }}</div>
+        <div class="clearfix"></div>
+
+    </section>
+{% endblock %}
+{% block body %}
+    <section class="main-content">
+    {% if (form_errors(formProd)) %}
+        <div class="alert alert-danger">{{ form_errors(formProd) }}</div>
+    {% endif %}
+    {% if (form_errors(formProd.precio)) %}
+        <div class="alert alert-danger">{{ form_errors(formProd.precio) }}</div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <br/>
+
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label>Nombre:</label>
+                            {{ form_widget(formProd.nombre) }}
+                            <p class="help-block">Nombre de producto, e.j. "Servicio de instalaci&oacute;n".</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Descripcion:</label>
+                                    {{ form_widget(formProd.descripcion) }}
+                                    <p class="help-block">Descripci&oacute;n de producto.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Precio:</label>
+                                    {{ form_widget(formProd.precio) }}
+                                    <p class="help-block">Precio de producto.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>{{ form_end(formProd) }}
+{% endblock %}

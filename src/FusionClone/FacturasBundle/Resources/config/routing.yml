@@ -1,0 +1,59 @@
+facturas_homepage:
+    pattern:  /facturas/
+    defaults: { _controller: FacturasBundle:Default:index }
+
+facturas_create:
+    pattern:  /facturas/crear/
+    defaults: { _controller: FacturasBundle:Default:create }
+
+facturas_detail:
+    pattern:  /facturas/{id}/detalles/
+    defaults: { _controller: FacturasBundle:Default:details }
+    options:
+      expose: true
+
+facturas_cancel:
+    pattern:  /facturas/{id}/cancelar/
+    defaults: { _controller: FacturasBundle:Default:cancel }
+
+facturas_recurrence:
+    pattern:  /facturas/recurrencia/
+    defaults: { _controller: FacturasBundle:Default:recurrence }
+
+facturas_recDelete:
+    pattern:  /facturas/{id}/borrar-recurrencia/
+    defaults: { _controller: FacturasBundle:Default:recDelete }
+
+facturas_recActivate:
+    pattern:  /facturas/{id}/activar-recurrencia/
+    defaults: { _controller: FacturasBundle:Default:recActivate }
+
+facturas_save:
+    pattern:  /facturas/salvar/
+    defaults: { _controller: FacturasBundle:Default:save }
+
+facturas_delete:
+    pattern:  /facturas/{id}/borrar/
+    defaults: { _controller: FacturasBundle:Default:delete }
+    options:
+      expose: true
+
+facturas_preview:
+    pattern:  /facturas/{id}/vista-previa/{preview}
+    defaults: { _controller: FacturasBundle:Default:preview }
+    options:
+      expose: true
+
+facturas_send_mail:
+    pattern:  /facturas/{id}/send-mail/
+    defaults: { _controller: FacturasBundle:Default:sendMail }
+
+facturas_pdf:
+    pattern:  /facturas/{id}/pdf/
+    defaults: { _controller: FacturasBundle:Default:pdf }
+
+facturas_listar:
+    pattern:  /facturas/listar/
+    defaults: { _controller: FacturasBundle:Default:list }
+    options:
+      expose: true

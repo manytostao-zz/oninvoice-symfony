@@ -1,0 +1,35 @@
+clientes_homepage:
+    pattern:  /clientes/
+    defaults: { _controller: ClientesBundle:Default:index }
+
+clientes_details:
+    pattern:  /clientes/{id}
+    defaults: { _controller: ClientesBundle:Default:details }
+    options:
+      expose: true
+
+clientes_create:
+    pattern:  /clientes/crear/
+    defaults: { _controller: ClientesBundle:Default:create }
+
+clientes_edit:
+    pattern:  /clientes/{id}/editar/
+    defaults: { _controller: ClientesBundle:Default:edit}
+    options:
+      expose: true
+
+clientes_save:
+    pattern:  /clientes/salvar/
+    defaults: { _controller: ClientesBundle:Default:save }
+
+clientes_delete:
+    pattern:  /clientes/{id}/borrar/
+    defaults: { _controller: ClientesBundle:Default:delete }
+    options:
+      expose: true
+
+clientes_listar:
+    pattern:  /clientes/listar/
+    defaults: { _controller: ClientesBundle:Default:list }
+    options:
+      expose: true
